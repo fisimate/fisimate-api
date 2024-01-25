@@ -1,7 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import morgan from "morgan";
-import https from "https";
+import http from "http";
 import errorHandlerMiddleware from "./middlewares/handleError.js";
 import cors from "cors";
 import helmet from "helmet";
@@ -18,10 +18,10 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 9000;
 
-const options = {
-  key: fs.readFileSync(path.join(configs.certLocation, "key.pem")),
-  cert: fs.readFileSync(path.join(configs.certLocation, "cert.pem")),
-};
+// const options = {
+//   key: fs.readFileSync(path.join(configs.certLocation, "key.pem")),
+//   cert: fs.readFileSync(path.join(configs.certLocation, "cert.pem")),
+// };
 
 app.use(morgan("dev"));
 app.use(express.json());
@@ -41,7 +41,8 @@ app.get("/", (req, res) => {
 app.use(errorHandlerMiddleware);
 app.use(handleNotFoundRoute);
 
-const server = https.createServer(options, app);
+// const server = https.createServer(options, app);
+const server = http.createServer(app);
 
 server.listen(port);
 
