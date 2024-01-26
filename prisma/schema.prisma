@@ -11,15 +11,17 @@ datasource db {
 }
 
 model User {
-  id           String         @id @default(uuid())
-  fullname     String
-  email        String         @unique
-  password     String?
-  isVerified   Boolean        @default(false) @map("is_verified")
-  otp          Int?
-  createdAt    DateTime       @default(now()) @map("created_at")
-  updatedAt    DateTime       @default(now()) @map("updated_at")
-  RefreshToken RefreshToken[]
+  id            String         @id @default(uuid())
+  fullname      String
+  email         String         @unique
+  password      String?
+  isVerified    Boolean        @default(false) @map("is_verified")
+  roleId        String         @map("role_id")
+  otp           Int?
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @default(now()) @map("updated_at")
+  refreshTokens RefreshToken[]
+  role          Role           @relation(fields: [roleId], references: [id])
 }
 
 model RefreshToken {
@@ -29,4 +31,10 @@ model RefreshToken {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @default(now()) @map("updated_at")
   user         User     @relation(fields: [userId], references: [id])
+}
+
+model Role {
+  id    String @id @default(uuid())
+  name  String
+  users User[]
 }

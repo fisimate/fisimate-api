@@ -19,12 +19,19 @@ const register = async (req, res, next) => {
 
     const hashPassword = await encrypt(password);
 
+    const role = await prisma.role.findFirst({
+      where: {
+        name: "user",
+      },
+    });
+
     const user = await prisma.user.create({
       data: {
         fullname,
         email,
         password: hashPassword,
         otp: generateOtpNumber(),
+        roleId: role.id,
       },
       select: {
         id: true,
