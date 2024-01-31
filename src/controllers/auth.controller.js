@@ -8,48 +8,16 @@ import { compare, encrypt } from "../lib/bcrypt.js";
 import prisma from "../lib/prisma.js";
 import generateOtpNumber from "../utils/random.js";
 import { otpMail } from "../utils/sendMail.js";
+import { authService } from "../services/index.js";
 
 const register = async (req, res, next) => {
   try {
-    const { fullname, email, password, passwordConfirmation } = req.body;
+    const result = await authService.register(req.body);
 
-    if (password !== passwordConfirmation) {
-      throw new BadRequestError("Password tidak cocok!");
-    }
-
-    const hashPassword = await encrypt(password);
-
-    const role = await prisma.role.findFirst({
-      where: {
-        name: "user",
-      },
-    });
-
-    const user = await prisma.user.create({
-      data: {
-        fullname,
-        email,
-        password: hashPassword,
-        otp: generateOtpNumber(),
-        roleId: role.id,
-      },
-      select: {
-        id: true,
-        fullname: true,
-        email: true,
-        otp: true,
-        isVerified: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
-
-    await otpMail(email, user);
-
-    return res.json({
+    return res.json({ 
       success: true,
       message: "Berhasil mendaftar akun!",
-      data: user,
+      data: result,
     });
   } catch (error) {
     next(error);
@@ -58,51 +26,20 @@ const register = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
-
-    const user = await prisma.user.findFirst({
-      where: {
-        email,
-      },
-    });
-
-    if (!user) {
-      throw new BadRequestError("Kredensial tidak valid!");
-    }
-
-    if (!user.isVerified) {
-      throw new BadRequestError("Akun belum diverifikasi!");
-    }
-
-    const comparePassword = await compare(password, user.password);
-
-    if (!comparePassword) {
-      throw new BadRequestError("Password salah!");
-    }
-
-    const token = createToken({ payload: createTokenUser(user) });
-
-    const refreshToken = createRefreshJWT({ payload: createTokenUser(user) });
-
-    await prisma.refreshToken.create({
-      data: {
-        refreshToken,
-        userId: user.id,
-      },
-    });
+    const result = await authService.login(req.body);
 
     return res
       .json({
         success: true,
         message: "Berhasil masuk!",
         data: {
-          access_token: token,
-          refresh_token: refreshToken,
+          access_token: result.token,
+          refresh_token: result.refreshToken,
           user: {
-            id: user.id,
-            fullname: user.fullname,
-            email: user.email,
-            created_at: user.createdAt,
+            id: result.user.id,
+            fullname: result.user.fullname,
+            email: result.user.email,
+            created_at: result.user.createdAt,
             updated_at: user.updatedAt,
           },
         },
@@ -233,8 +170,6 @@ const getFacebookUrl = (req, res, next) => {
 
 const facebookCallback = (req, res, next) => {
   try {
-    console.log(req.user);
-
     const token = createToken({ payload: createTokenUser(req.user) });
 
     return res.status(200).json({
