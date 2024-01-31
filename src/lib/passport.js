@@ -36,7 +36,6 @@ export const useGoogleStrategy = () => {
               data: {
                 fullname: profile._json.name,
                 email: profile._json.email,
-                isVerified: true,
               },
             });
 
@@ -68,7 +67,7 @@ export const useFacebookStrategy = () => {
 
           const email = profile.emails[0].value;
 
-          console.log(email)
+          console.log(email);
 
           let user = await prisma.user.findFirst({
             where: {
@@ -83,7 +82,6 @@ export const useFacebookStrategy = () => {
               data: {
                 fullname: profile.displayName,
                 email,
-                isVerified: true,
               },
             });
 

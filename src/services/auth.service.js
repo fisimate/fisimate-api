@@ -1,6 +1,6 @@
 import BadRequestError from "../errors/badRequest.js";
-import { compare } from "../lib/bcrypt.js";
-import { createToken } from "../lib/jwt.js";
+import { compare, encrypt } from "../lib/bcrypt.js";
+import { createRefreshJWT, createToken } from "../lib/jwt.js";
 import prisma from "../lib/prisma.js";
 import { createTokenUser } from "../utils/createToken.js";
 
@@ -15,10 +15,6 @@ const login = async (data) => {
 
   if (!user) {
     throw new BadRequestError("Kredensial tidak valid!");
-  }
-
-  if (!user.isVerified) {
-    throw new BadRequestError("Akun belum diverifikasi!");
   }
 
   const comparePassword = await compare(password, user.password);
@@ -61,15 +57,12 @@ const register = async (data) => {
       fullname,
       email,
       password: hashPassword,
-      otp: generateOtpNumber(),
       roleId: role.id,
     },
     select: {
       id: true,
       fullname: true,
       email: true,
-      otp: true,
-      isVerified: true,
       createdAt: true,
       updatedAt: true,
     },

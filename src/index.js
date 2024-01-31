@@ -9,9 +9,6 @@ import routes from "./routes/index.js";
 import handleNotFoundRoute from "./middlewares/notFoundRoute.js";
 import compression from "compression";
 import xss from "./middlewares/xss.js";
-import fs from "fs";
-import path from "path";
-import configs from "./configs/index.js";
 
 dotenv.config();
 

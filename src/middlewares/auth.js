@@ -31,8 +31,6 @@ export const authenticateUser = async (req, res, next) => {
       id: payload.id,
       fullname: payload.fullname,
       email: payload.email,
-      otp: payload.otp,
-      isVerified: payload.isVerified,
     };
 
     next();

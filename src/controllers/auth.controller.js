@@ -1,20 +1,17 @@
 import passport from "passport";
-import { createRefreshJWT, createToken } from "../lib/jwt.js";
+import { createToken } from "../lib/jwt.js";
 import { createTokenUser } from "../utils/createToken.js";
 import { useFacebookStrategy, useGoogleStrategy } from "../lib/passport.js";
 import configs from "../configs/index.js";
 import BadRequestError from "../errors/badRequest.js";
-import { compare, encrypt } from "../lib/bcrypt.js";
 import prisma from "../lib/prisma.js";
-import generateOtpNumber from "../utils/random.js";
-import { otpMail } from "../utils/sendMail.js";
 import { authService } from "../services/index.js";
 
 const register = async (req, res, next) => {
   try {
     const result = await authService.register(req.body);
 
-    return res.json({ 
+    return res.json({
       success: true,
       message: "Berhasil mendaftar akun!",
       data: result,
@@ -40,7 +37,7 @@ const login = async (req, res, next) => {
             fullname: result.user.fullname,
             email: result.user.email,
             created_at: result.user.createdAt,
-            updated_at: user.updatedAt,
+            updated_at: result.user.updatedAt,
           },
         },
       })
