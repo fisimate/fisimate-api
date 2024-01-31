@@ -6,16 +6,13 @@ import configs from "../configs/index.js";
 import BadRequestError from "../errors/badRequest.js";
 import prisma from "../lib/prisma.js";
 import { authService } from "../services/index.js";
+import apiSuccess from "../utils/apiSuccess.js";
 
 const register = async (req, res, next) => {
   try {
     const result = await authService.register(req.body);
 
-    return res.json({
-      success: true,
-      message: "Berhasil mendaftar akun!",
-      data: result,
-    });
+    return apiSuccess(res, "Berhasil mendaftar akun!", result);
   } catch (error) {
     next(error);
   }
@@ -25,23 +22,20 @@ const login = async (req, res, next) => {
   try {
     const result = await authService.login(req.body);
 
-    return res
-      .json({
-        success: true,
-        message: "Berhasil masuk!",
-        data: {
-          access_token: result.token,
-          refresh_token: result.refreshToken,
-          user: {
-            id: result.user.id,
-            fullname: result.user.fullname,
-            email: result.user.email,
-            created_at: result.user.createdAt,
-            updated_at: result.user.updatedAt,
-          },
-        },
-      })
-      .status(200);
+    const data = {
+      access_token: result.token,
+      refresh_token: result.refreshToken,
+      user: {
+        id: result.user.id,
+        fullname: result.user.fullname,
+        email: result.user.email,
+        role: result.user.role,
+        created_at: result.user.createdAt,
+        updated_at: result.user.updatedAt,
+      },
+    };
+
+    return apiSuccess(res, "Berhasil masuk!", data);
   } catch (error) {
     next(error);
   }

@@ -1,6 +1,7 @@
 import BadRequestError from "../errors/badRequest.js";
 import { compare, encrypt } from "../lib/bcrypt.js";
 import prisma from "../lib/prisma.js";
+import exclude from "../utils/exclude.js";
 
 const updateProfile = async (req) => {
   const { email, fullname } = req.body;
@@ -15,17 +16,12 @@ const updateProfile = async (req) => {
       email,
       fullname,
     },
-    select: {
-      id: true,
-      email: true,
-      fullname: true,
+    include: {
       role: true,
-      createdAt: true,
-      updatedAt: true,
     },
   });
 
-  return user;
+  return exclude(user, ["password"]);
 };
 
 const changePassword = async (req) => {
@@ -43,8 +39,6 @@ const changePassword = async (req) => {
   });
 
   const userPasssword = await compare(oldPassword, user.password);
-
-  console.log(userPasssword);
 
   if (!userPasssword) {
     throw new BadRequestError("Password salah!");
@@ -65,14 +59,7 @@ const changePassword = async (req) => {
     },
   });
 
-  return {
-    id: user.id,
-    email: user.email,
-    fullname: user.fullname,
-    role: user.role,
-    createdAt: user.createdAt,
-    updatedAt: user.updatedAt,
-  };
+  return exclude(user, ["password"]);
 };
 
 const getOneUser = async (req) => {
@@ -82,17 +69,12 @@ const getOneUser = async (req) => {
     where: {
       id,
     },
-    select: {
-      id: true,
-      email: true,
-      fullname: true,
+    include: {
       role: true,
-      createdAt: true,
-      updatedAt: true,
     },
   });
 
-  return user;
+  return exclude(user, ["password"]);
 };
 
 export default {

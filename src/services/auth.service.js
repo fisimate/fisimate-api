@@ -3,6 +3,7 @@ import { compare, encrypt } from "../lib/bcrypt.js";
 import { createRefreshJWT, createToken } from "../lib/jwt.js";
 import prisma from "../lib/prisma.js";
 import { createTokenUser } from "../utils/createToken.js";
+import exclude from "../utils/exclude.js";
 
 const login = async (data) => {
   const { email, password } = data;
@@ -11,6 +12,9 @@ const login = async (data) => {
     where: {
       email,
     },
+    include: {
+      role: true
+    }
   });
 
   if (!user) {
@@ -59,16 +63,12 @@ const register = async (data) => {
       password: hashPassword,
       roleId: role.id,
     },
-    select: {
-      id: true,
-      fullname: true,
-      email: true,
-      createdAt: true,
-      updatedAt: true,
+    include: {
+      role: true,
     },
   });
 
-  return user;
+  return exclude(user, ["password"]);
 };
 
 export default { login, register };
