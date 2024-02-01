@@ -179,7 +179,9 @@ const refreshToken = async (req, res, next) => {
   try {
     const result = await authService.refreshToken(req);
 
-    return apiSuccess(res, "Sukses mendapatkan refresh token!", result);
+    return apiSuccess(res, "Sukses refresh token!", {
+      access_token: result,
+    });
   } catch (error) {
     next(error);
   }
