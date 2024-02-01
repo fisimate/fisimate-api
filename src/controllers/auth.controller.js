@@ -175,6 +175,16 @@ const facebookCallback = (req, res, next) => {
   }
 };
 
+const refreshToken = async (req, res, next) => {
+  try {
+    const result = await authService.refreshToken(req);
+
+    return apiSuccess(res, "Sukses mendapatkan refresh token!", result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   register,
   login,
@@ -183,4 +193,5 @@ export default {
   getGoogleUrl,
   getFacebookUrl,
   facebookCallback,
+  refreshToken,
 };

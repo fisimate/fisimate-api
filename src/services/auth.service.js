@@ -1,6 +1,10 @@
 import BadRequestError from "../errors/badRequest.js";
 import { compare, encrypt } from "../lib/bcrypt.js";
-import { createRefreshJWT, createToken } from "../lib/jwt.js";
+import {
+  createRefreshJWT,
+  createToken,
+  isRefreshTokenValid,
+} from "../lib/jwt.js";
 import prisma from "../lib/prisma.js";
 import { createTokenUser } from "../utils/createToken.js";
 import exclude from "../utils/exclude.js";
@@ -13,8 +17,8 @@ const login = async (data) => {
       email,
     },
     include: {
-      role: true
-    }
+      role: true,
+    },
   });
 
   if (!user) {
@@ -71,4 +75,30 @@ const register = async (data) => {
   return exclude(user, ["password"]);
 };
 
-export default { login, register };
+const refreshToken = async (req) => {
+  const { refreshToken } = req.params;
+
+  const result = await prisma.refreshToken.findFirst({
+    where: {
+      refreshToken,
+    },
+  });
+
+  if (!result) {
+    throw new BadRequestError("Token tidak valid!");
+  }
+
+  const payload = isRefreshTokenValid({ token: result.refreshToken });
+
+  const userCheck = await prisma.user.findFirst({
+    where: {
+      email: payload.email,
+    },
+  });
+
+  const token = createToken({ payload: createTokenUser(userCheck) });
+
+  return token;
+};
+
+export default { login, register, refreshToken };
