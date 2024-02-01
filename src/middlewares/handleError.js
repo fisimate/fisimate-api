@@ -6,6 +6,8 @@ const errorHandlerMiddleware = (err, req, res, next) => {
     message: err.message || "Internal server error!",
   };
 
+  let error = { ...err };
+
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
     customError.statusCode = 400;
 
@@ -26,6 +28,12 @@ const errorHandlerMiddleware = (err, req, res, next) => {
         customError.message = `Something wrong: ${err.message}`;
         break;
     }
+  } else if (error.name === "JsonWebTokenError") {
+    customError.statusCode = 400;
+    customError.message = `Token tidak valid!`;
+  } else if (error.name === "TokenExpiredError") {
+    customError.statusCode = 401;
+    customError.message = `Token expired!`;
   }
 
   return res.status(customError.statusCode).json({
