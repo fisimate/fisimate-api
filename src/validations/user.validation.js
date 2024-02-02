@@ -25,7 +25,7 @@ const updateProfile = z.object({
       required_error: "Fullname perlu diisi!",
     }),
     nis: z.string({
-      required_error: "Fullname perlu diisi!",
+      required_error: "NIS perlu diisi!",
     }),
   }),
 });
