@@ -22,20 +22,7 @@ const login = async (req, res, next) => {
   try {
     const result = await authService.login(req.body);
 
-    const data = {
-      access_token: result.token,
-      refresh_token: result.refreshToken,
-      user: {
-        id: result.user.id,
-        fullname: result.user.fullname,
-        email: result.user.email,
-        role: result.user.role,
-        created_at: result.user.createdAt,
-        updated_at: result.user.updatedAt,
-      },
-    };
-
-    return apiSuccess(res, "Berhasil masuk!", data);
+    return apiSuccess(res, "Berhasil masuk!", result);
   } catch (error) {
     next(error);
   }

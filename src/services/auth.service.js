@@ -42,11 +42,15 @@ const login = async (data) => {
     },
   });
 
-  return { token, refreshToken, user };
+  return {
+    access_token: token,
+    refresh_token: refreshToken,
+    user: exclude(user, ["password"]),
+  };
 };
 
 const register = async (data) => {
-  const { fullname, email, password, passwordConfirmation } = data;
+  const { fullname, email, nis, password, passwordConfirmation } = data;
 
   if (password !== passwordConfirmation) {
     throw new BadRequestError("Password tidak cocok!");
@@ -64,6 +68,7 @@ const register = async (data) => {
     data: {
       fullname,
       email,
+      nis,
       password: hashPassword,
       roleId: role.id,
     },

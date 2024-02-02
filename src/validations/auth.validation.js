@@ -10,6 +10,9 @@ const register = z.object({
         required_error: "Email perlu diisi!",
       })
       .email("Email tidak valid!"),
+    nis: z.string({
+      required_error: "NIS perlu diisi!",
+    }),
     password: z.string({ required_error: "Password perlu diisi!" }),
     passwordConfirmation: z.string({
       required_error: "Password confirmation perlu diisi!",
@@ -46,5 +49,5 @@ const verify = z.object({
 export default {
   register,
   login,
-  verify
+  verify,
 };

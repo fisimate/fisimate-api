@@ -4,7 +4,7 @@ import prisma from "../lib/prisma.js";
 import exclude from "../utils/exclude.js";
 
 const updateProfile = async (req) => {
-  const { email, fullname } = req.body;
+  const { email, fullname, nis } = req.body;
 
   const { id } = req.user;
 
@@ -15,6 +15,7 @@ const updateProfile = async (req) => {
     data: {
       email,
       fullname,
+      nis,
     },
     include: {
       role: true,
