@@ -13,16 +13,16 @@ const errorHandlerMiddleware = (err, req, res, next) => {
 
     switch (err.code) {
       case "P2002":
-        customError.message = `Duplicate field value: ${err.meta.target}`;
+        customError.message = `${err.meta.target} sudah digunakan`;
         break;
       case "P2014":
         customError.message = `Invalid ID: ${err.meta.target}`;
         break;
       case "P2003":
-        customError.message = `Invalid input data: ${err.meta.target}`;
+        customError.message = `Invalid input!`;
         break;
       case "P2025":
-        customError.message = `Related record not found: ${err.meta.target}`;
+        customError.message = `Data not found!`;
         break;
       default:
         customError.message = `Something wrong: ${err.message}`;
