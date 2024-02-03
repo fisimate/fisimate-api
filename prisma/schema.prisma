@@ -37,3 +37,18 @@ model Role {
   name  String
   users User[]
 }
+
+model Chapter {
+  id        String     @id @default(uuid())
+  name      String
+  examBanks ExamBank[]
+}
+
+model ExamBank {
+  id        String  @id @default(uuid())
+  title     String
+  icon      String
+  filePath  String  @map("file_path")
+  chapterId String  @map("chapter_id")
+  chapter   Chapter @relation(fields: [chapterId], references: [id])
+}
