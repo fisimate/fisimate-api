@@ -2,15 +2,21 @@ import { z } from "zod";
 
 const changePassword = z.object({
   body: z.object({
-    oldPassword: z.string({
-      required_error: "Password lama perlu diisi!",
-    }),
-    newPassword: z.string({
-      required_error: "Password baru perlu diisi!",
-    }),
-    passwordConfirmation: z.string({
-      required_error: "Password konfirmasi perlu diisi!",
-    }),
+    oldPassword: z
+      .string({
+        required_error: "Password lama perlu diisi!",
+      })
+      .min(8, { message: "Password minimal 8 karakter!" }),
+    newPassword: z
+      .string({
+        required_error: "Password baru perlu diisi!",
+      })
+      .min(8, { message: "Password minimal 8 karakter!" }),
+    passwordConfirmation: z
+      .string({
+        required_error: "Password konfirmasi perlu diisi!",
+      })
+      .min(8, { message: "Password minimal 8 karakter!" }),
   }),
 });
 

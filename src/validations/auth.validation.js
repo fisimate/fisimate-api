@@ -13,10 +13,15 @@ const register = z.object({
     nis: z.string({
       required_error: "NIS perlu diisi!",
     }),
-    password: z.string({ required_error: "Password perlu diisi!" }),
-    passwordConfirmation: z.string({
-      required_error: "Password confirmation perlu diisi!",
-    }),
+    password: z
+      .string({ required_error: "Password perlu diisi!" })
+      .min(8, { message: "Password minimal 8 karakter!" }),
+
+    passwordConfirmation: z
+      .string({
+        required_error: "Password confirmation perlu diisi!",
+      })
+      .min(8, { message: "Password minimal 8 karakter!" }),
   }),
 });
 
@@ -27,7 +32,9 @@ const login = z.object({
         required_error: "Email perlu diisi!",
       })
       .email("Email tidak valid!"),
-    password: z.string({ required_error: "Password perlu diisi!" }),
+    password: z
+      .string({ required_error: "Password perlu diisi!" })
+      .min(8, { message: "Password minimal 8 karakter!" }),
   }),
 });
 
