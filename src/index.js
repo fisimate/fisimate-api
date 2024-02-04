@@ -29,6 +29,8 @@ app.use(helmet());
 app.use(compression());
 app.use(xss());
 
+app.use("/storage", express.static("public"));
+
 app.use("/api/v1", routes);
 
 app.get("/", (req, res) => {
