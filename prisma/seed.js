@@ -16,6 +16,22 @@ async function main() {
   await prisma.role.createMany({
     data: roles,
   });
+
+  const chapters = [
+    {
+      name: "Keseimbangan Benda",
+    },
+    {
+      name: "Dinamika Rotasi",
+    },
+    {
+      name: "Fluida",
+    },
+  ];
+
+  await prisma.chapter.createMany({
+    data: chapters,
+  });
 }
 
 main()
