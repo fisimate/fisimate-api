@@ -1,18 +1,23 @@
-import express from 'express';
-import authRoute from './auth.route.js';
-import userRoute from './user.route.js';
+import express from "express";
+import authRoute from "./auth.route.js";
+import userRoute from "./user.route.js";
+import examBankRoute from "./examBank.route.js";
 
 const router = express.Router();
 
 const defaultRoutes = [
   {
-    path: '/auth',
-    route: authRoute
+    path: "/auth",
+    route: authRoute,
   },
   {
-    path: '/users',
-    route: userRoute
-  }
+    path: "/users",
+    route: userRoute,
+  },
+  {
+    path: "/exam-banks",
+    route: examBankRoute,
+  },
 ];
 
 defaultRoutes.forEach((route) => {

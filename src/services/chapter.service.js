@@ -45,10 +45,21 @@ const remove = async (chapterId) => {
   return;
 };
 
+const getExambanks = async () => {
+  const examBanks = await prisma.chapter.findMany({
+    include: {
+      examBanks: true,
+    },
+  });
+
+  return examBanks;
+};
+
 export default {
   getAlls,
   getOne,
   create,
   update,
   remove,
+  getExambanks,
 };
