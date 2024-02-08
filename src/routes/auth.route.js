@@ -4,11 +4,10 @@ import { authController } from "../controllers/index.js";
 import { useFacebookStrategy, useGoogleStrategy } from "../lib/passport.js";
 import authValidation from "../validations/auth.validation.js";
 import validate from "../middlewares/validate.js";
-// import validate from '../middlewares/validate.js'
+import { authenticateUser } from "../middlewares/auth.js";
 
 const router = express.Router();
 
-// router.post('/register', validate(authValidation.register), authController.register);
 
 useGoogleStrategy();
 useFacebookStrategy();
@@ -42,6 +41,7 @@ router.post(
   authController.register
 );
 router.post("/login", validate(authValidation.login), authController.login);
+router.post("/logout",authenticateUser, authController.logout);
 router.get("/token/refresh/:refreshToken", authController.refreshToken);
 // router.post("/verify", validate(authValidation.verify), authController.verify);
 

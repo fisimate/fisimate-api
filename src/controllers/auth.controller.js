@@ -174,6 +174,16 @@ const refreshToken = async (req, res, next) => {
   }
 };
 
+const logout = async (req, res, next) => {
+  try {
+    await authService.logout(req);
+
+    return apiSuccess(res, "Berhasil logout!", null);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   register,
   login,
@@ -183,4 +193,5 @@ export default {
   getFacebookUrl,
   facebookCallback,
   refreshToken,
+  logout,
 };
