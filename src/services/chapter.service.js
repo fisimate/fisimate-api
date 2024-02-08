@@ -55,6 +55,16 @@ const getExambanks = async () => {
   return examBanks;
 };
 
+const getMaterialBanks = async() => {
+  const materialBanks = await prisma.chapter.findMany({
+    include: {
+      materialBanks: true,
+    },
+  });
+  
+  return materialBanks;
+}
+
 export default {
   getAlls,
   getOne,
@@ -62,4 +72,5 @@ export default {
   update,
   remove,
   getExambanks,
+  getMaterialBanks
 };

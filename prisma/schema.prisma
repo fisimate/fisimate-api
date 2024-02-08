@@ -39,15 +39,27 @@ model Role {
 }
 
 model Chapter {
-  id        String     @id @default(uuid())
-  name      String
-  slug      String
-  createdAt DateTime   @default(now()) @map("created_at")
-  updatedAt DateTime   @default(now()) @map("updated_at")
-  examBanks ExamBank[]
+  id            String         @id @default(uuid())
+  name          String
+  slug          String
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @default(now()) @map("updated_at")
+  examBanks     ExamBank[]
+  materialBanks MaterialBank[]
 }
 
 model ExamBank {
+  id        String   @id @default(uuid())
+  title     String
+  icon      String
+  filePath  String   @map("file_path")
+  chapterId String   @map("chapter_id")
+  chapter   Chapter  @relation(fields: [chapterId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+}
+
+model MaterialBank {
   id        String   @id @default(uuid())
   title     String
   icon      String
