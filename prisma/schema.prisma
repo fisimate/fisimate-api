@@ -46,6 +46,7 @@ model Chapter {
   updatedAt     DateTime       @default(now()) @map("updated_at")
   examBanks     ExamBank[]
   materialBanks MaterialBank[]
+  formulaBanks   FormulaBank[]
 }
 
 model ExamBank {
@@ -60,6 +61,17 @@ model ExamBank {
 }
 
 model MaterialBank {
+  id        String   @id @default(uuid())
+  title     String
+  icon      String
+  filePath  String   @map("file_path")
+  chapterId String   @map("chapter_id")
+  chapter   Chapter  @relation(fields: [chapterId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+}
+
+model FormulaBank {
   id        String   @id @default(uuid())
   title     String
   icon      String
