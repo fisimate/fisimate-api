@@ -13,6 +13,27 @@ const getOneExamBank = async (id) => {
   return examBank;
 };
 
+const getExamBanks = async () => {
+  const [totalChapters, totalSubChapters, examBanks] = await Promise.all([
+    prisma.chapter.count(),
+    prisma.examBank.count(),
+    prisma.chapter.findMany({
+      include: {
+        examBanks: true,
+      },
+    }),
+  ]);
+
+  return {
+    count: {
+      chapters: totalChapters,
+      sub_chapters: totalSubChapters,
+    },
+    result: examBanks,
+  };
+};
+
 export default {
   getOneExamBank,
+  getExamBanks,
 };

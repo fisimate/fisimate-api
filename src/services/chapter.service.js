@@ -45,43 +45,10 @@ const remove = async (chapterId) => {
   return;
 };
 
-const getExambanks = async () => {
-  const examBanks = await prisma.chapter.findMany({
-    include: {
-      examBanks: true,
-    },
-  });
-
-  return examBanks;
-};
-
-const getMaterialBanks = async() => {
-  const materialBanks = await prisma.chapter.findMany({
-    include: {
-      materialBanks: true,
-    },
-  });
-  
-  return materialBanks;
-}
-
-const getFormulaBanks = async() => {
-  const formulaBanks = await prisma.chapter.findMany({
-    include: {
-      formulaBanks: true,
-    },
-  });
-  
-  return formulaBanks;
-}
-
 export default {
   getAlls,
   getOne,
   create,
   update,
   remove,
-  getExambanks,
-  getMaterialBanks,
-  getFormulaBanks
 };

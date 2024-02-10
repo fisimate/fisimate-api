@@ -10,9 +10,30 @@ const getOneFormulaBank = async (id) => {
     },
   });
 
-    return formulaBank;
+  return formulaBank;
+};
+
+const getFormulaBanks = async () => {
+  const [totalChapters, totalSubChapters, formulaBanks] = await Promise.all([
+    prisma.chapter.count(),
+    prisma.formulaBank.count(),
+    prisma.chapter.findMany({
+      include: {
+        formulaBanks: true,
+      },
+    }),
+  ]);
+
+  return {
+    count: {
+      chapters: totalChapters,
+      sub_chapters: totalSubChapters,
+    },
+    result: formulaBanks,
+  };
 };
 
 export default {
   getOneFormulaBank,
+  getFormulaBanks,
 };

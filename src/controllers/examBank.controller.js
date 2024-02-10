@@ -1,9 +1,9 @@
-import { chapterService, examBankService } from "../services/index.js";
+import { examBankService } from "../services/index.js";
 import apiSuccess from "../utils/apiSuccess.js";
 
 const index = async (req, res, next) => {
   try {
-    const examBanks = await chapterService.getExambanks();
+    const examBanks = await examBankService.getExamBanks();
 
     return apiSuccess(res, "Sukses mendapatkan semua bank soal!", examBanks);
   } catch (error) {

@@ -1,9 +1,9 @@
-import { chapterService, materialBankService } from "../services/index.js";
+import { materialBankService } from "../services/index.js";
 import apiSuccess from "../utils/apiSuccess.js";
 
 const index = async (req, res, next) => {
   try {
-    const materialBanks = await chapterService.getMaterialBanks();
+    const materialBanks = await materialBankService.getMaterialBanks();
 
     return apiSuccess(
       res,

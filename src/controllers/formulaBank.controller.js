@@ -1,11 +1,15 @@
-import { chapterService, formulaBankService } from "../services/index.js";
+import { formulaBankService } from "../services/index.js";
 import apiSuccess from "../utils/apiSuccess.js";
 
 const index = async (req, res, next) => {
   try {
-    const formulaBanks = await chapterService.getFormulaBanks();
+    const formulaBanks = await formulaBankService.getFormulaBanks();
 
-    return apiSuccess(res, "Sukses mendapatkan semua bank rumus!", formulaBanks);
+    return apiSuccess(
+      res,
+      "Sukses mendapatkan semua bank rumus!",
+      formulaBanks
+    );
   } catch (error) {
     next(error);
   }
@@ -13,7 +17,9 @@ const index = async (req, res, next) => {
 
 const show = async (req, res, next) => {
   try {
-    const formulaBank = await formulaBankService.getOneFormulaBank(req.params.id);
+    const formulaBank = await formulaBankService.getOneFormulaBank(
+      req.params.id
+    );
 
     return apiSuccess(res, "Sukses mendapatkan bank rumus!", formulaBank);
   } catch (error) {
