@@ -11,16 +11,17 @@ datasource db {
 }
 
 model User {
-  id            String         @id @default(uuid())
-  fullname      String
-  email         String         @unique
-  nis           String?        @unique
-  password      String?
-  roleId        String         @map("role_id")
-  createdAt     DateTime       @default(now()) @map("created_at")
-  updatedAt     DateTime       @default(now()) @map("updated_at")
-  refreshTokens RefreshToken[]
-  role          Role           @relation(fields: [roleId], references: [id])
+  id               String             @id @default(uuid())
+  fullname         String
+  email            String             @unique
+  nis              String?            @unique
+  password         String?
+  roleId           String             @map("role_id")
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedAt        DateTime           @default(now()) @map("updated_at")
+  refreshTokens    RefreshToken[]
+  role             Role               @relation(fields: [roleId], references: [id])
+  UserQuizResponse UserQuizResponse[]
 }
 
 model RefreshToken {
@@ -46,7 +47,8 @@ model Chapter {
   updatedAt     DateTime       @default(now()) @map("updated_at")
   examBanks     ExamBank[]
   materialBanks MaterialBank[]
-  formulaBanks   FormulaBank[]
+  formulaBanks  FormulaBank[]
+  simulations   Simulation[]
 }
 
 model ExamBank {
@@ -78,6 +80,71 @@ model FormulaBank {
   filePath  String   @map("file_path")
   chapterId String   @map("chapter_id")
   chapter   Chapter  @relation(fields: [chapterId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+}
+
+model Simulation {
+  id        String     @id @default(uuid())
+  title     String
+  icon      String
+  filePath  String     @map("file_path")
+  chapterId String     @map("chapter_id")
+  chapter   Chapter    @relation(fields: [chapterId], references: [id])
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @default(now()) @map("updated_at")
+  materials Material[]
+  quizzes   Quiz[]
+}
+
+model Material {
+  id           String     @id @default(uuid())
+  title        String
+  icon         String
+  filePath     String     @map("file_path")
+  simulationId String     @map("simulation_id")
+  simulation   Simulation @relation(fields: [simulationId], references: [id])
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @default(now()) @map("updated_at")
+}
+
+model Quiz {
+  id                String             @id @default(uuid())
+  simulationId      String             @map("simulation_id")
+  simulation        Simulation         @relation(fields: [simulationId], references: [id])
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @default(now()) @map("updated_at")
+  quizOptions       QuizOption[]
+  quizReviews       QuizReview[]
+  sserQuizResponses UserQuizResponse[]
+}
+
+model QuizOption {
+  id         String   @id @default(uuid())
+  text       String
+  is_correct Boolean
+  quizId     String   @map("quiz_id")
+  quiz       Quiz     @relation(fields: [quizId], references: [id])
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @map("updated_at")
+}
+
+model QuizReview {
+  id        String   @id @default(uuid())
+  filePath  String   @map("file_path")
+  quizId    String   @map("quiz_id")
+  quiz      Quiz     @relation(fields: [quizId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+}
+
+model UserQuizResponse {
+  id        String   @id @default(uuid())
+  score     Float
+  quizId    String   @map("quiz_id")
+  quiz      Quiz     @relation(fields: [quizId], references: [id])
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 }
