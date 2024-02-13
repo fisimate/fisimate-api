@@ -10,7 +10,7 @@ const route = express.Router();
 route.get("/", authenticateUser, simulationController.index);
 route.get("/:id", authenticateUser, simulationController.show);
 route.get(
-  "/materials/:simulationId",
+  "/:simulationId/materials",
   authenticateUser,
   materialController.show
 );
