@@ -88,7 +88,6 @@ model Simulation {
   id        String     @id @default(uuid())
   title     String
   icon      String
-  filePath  String     @map("file_path")
   chapterId String     @map("chapter_id")
   chapter   Chapter    @relation(fields: [chapterId], references: [id])
   createdAt DateTime   @default(now()) @map("created_at")
@@ -99,8 +98,6 @@ model Simulation {
 
 model Material {
   id           String     @id @default(uuid())
-  title        String
-  icon         String
   filePath     String     @map("file_path")
   simulationId String     @map("simulation_id")
   simulation   Simulation @relation(fields: [simulationId], references: [id])
