@@ -3,7 +3,7 @@ import apiSuccess from "../utils/apiSuccess.js";
 
 const index = async (req, res, next) => {
   try {
-    const simulations = await simulationService.getAllSimulations();
+    const simulations = await simulationService.getAllSimulations(req);
 
     return apiSuccess(res, "Berhasil mendapatkan semua simulasi!", simulations);
   } catch (error) {
