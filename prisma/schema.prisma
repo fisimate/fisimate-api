@@ -111,19 +111,30 @@ model Quiz {
   simulation        Simulation         @relation(fields: [simulationId], references: [id])
   createdAt         DateTime           @default(now()) @map("created_at")
   updatedAt         DateTime           @default(now()) @map("updated_at")
-  quizOptions       QuizOption[]
   quizReviews       QuizReview[]
-  sserQuizResponses UserQuizResponse[]
+  userQuizResponses UserQuizResponse[]
+  questions         Question[]
+}
+
+model Question {
+  id          String       @id @default(uuid())
+  text        String
+  quizId      String       @map("quiz_id")
+  quiz        Quiz         @relation(fields: [quizId], references: [id])
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @default(now()) @map("updated_at")
+  quizOptions QuizOption[]
 }
 
 model QuizOption {
   id         String   @id @default(uuid())
   text       String
   is_correct Boolean
-  quizId     String   @map("quiz_id")
-  quiz       Quiz     @relation(fields: [quizId], references: [id])
+  questionId String   @map("question_id")
+  question   Question @relation(fields: [questionId], references: [id])
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @default(now()) @map("updated_at")
+  quizId     String?
 }
 
 model QuizReview {
