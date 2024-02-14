@@ -4,6 +4,8 @@ import userRoute from "./user.route.js";
 import examBankRoute from "./examBank.route.js";
 import materialBankRoute from "./materialBank.route.js";
 import formulaBankRoute from "./formulaBank.route.js";
+import simulationRoute from "./simulation.route.js";
+import chapterRoute from "./chapter.route.js";
 
 const router = express.Router();
 
@@ -27,6 +29,14 @@ const defaultRoutes = [
   {
     path: "/formula-banks",
     route: formulaBankRoute,
+  },
+  {
+    path: "/simulations",
+    route: simulationRoute,
+  },
+  {
+    path: "/chapters",
+    route: chapterRoute,
   },
 ];
 

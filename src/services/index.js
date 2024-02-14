@@ -4,3 +4,5 @@ export { default as chapterService } from "./chapter.service.js";
 export { default as examBankService } from "./examBank.service.js";
 export { default as materialBankService } from "./materialBank.service.js";
 export { default as formulaBankService } from "./formulaBank.service.js";
+export { default as simulationService } from "./simulation.service.js";
+export { default as materialService } from "./material.service.js";
