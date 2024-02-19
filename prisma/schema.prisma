@@ -129,7 +129,7 @@ model Question {
 model QuizOption {
   id         String   @id @default(uuid())
   text       String
-  is_correct Boolean
+  isCorrect  Boolean  @map("is_correct")
   questionId String   @map("question_id")
   question   Question @relation(fields: [questionId], references: [id])
   createdAt  DateTime @default(now()) @map("created_at")
