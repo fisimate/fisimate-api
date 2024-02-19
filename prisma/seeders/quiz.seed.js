@@ -87,66 +87,66 @@ const quizSeed = async (simulations) => {
 
     // question 1
     {
-      questionId: createdQuestion[0].id,
+      questionId: createdQuestion[1].id,
       text: "Memancing",
       isCorrect: false,
     },
     {
-      questionId: createdQuestion[0].id,
+      questionId: createdQuestion[1].id,
       text: "Mencari Judul",
       isCorrect: false,
     },
     {
-      questionId: createdQuestion[0].id,
+      questionId: createdQuestion[1].id,
       text: "Belajar Fisika",
       isCorrect: true,
     },
     {
-      questionId: createdQuestion[0].id,
+      questionId: createdQuestion[1].id,
       text: "Hilang kesadaran",
       isCorrect: false,
     },
 
     // question 2
     {
-      questionId: createdQuestion[0].id,
+      questionId: createdQuestion[2].id,
       text: "Memancing",
       isCorrect: true,
     },
     {
-      questionId: createdQuestion[0].id,
+      questionId: createdQuestion[2].id,
       text: "Mencari Judul",
       isCorrect: false,
     },
     {
-      questionId: createdQuestion[0].id,
+      questionId: createdQuestion[2].id,
       text: "Belajar Fisika",
       isCorrect: false,
     },
     {
-      questionId: createdQuestion[0].id,
+      questionId: createdQuestion[2].id,
       text: "Hilang kesadaran",
       isCorrect: false,
     },
 
     // question 3
     {
-      questionId: createdQuestion[0].id,
+      questionId: createdQuestion[3].id,
       text: "Memancing",
       isCorrect: false,
     },
     {
-      questionId: createdQuestion[0].id,
+      questionId: createdQuestion[3].id,
       text: "Mencari Judul",
       isCorrect: true,
     },
     {
-      questionId: createdQuestion[0].id,
+      questionId: createdQuestion[3].id,
       text: "Belajar Fisika",
       isCorrect: false,
     },
     {
-      questionId: createdQuestion[0].id,
+      questionId: createdQuestion[3].id,
       text: "Hilang kesadaran",
       isCorrect: false,
     },
