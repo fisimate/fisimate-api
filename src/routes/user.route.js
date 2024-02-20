@@ -3,14 +3,16 @@ import { userController } from "../controllers/index.js";
 import { authenticateUser } from "../middlewares/auth.js";
 import validate from "../middlewares/validate.js";
 import userValidation from "../validations/user.validation.js";
+import upload from "../lib/multer.js";
 
 const router = express.Router();
 
 router.get("/profile", authenticateUser, userController.getProfile);
-router.post(
+router.put(
   "/update",
   authenticateUser,
   validate(userValidation.updateProfile),
+  upload.single("profilePicture"),
   userController.updateProfile
 );
 router.post(

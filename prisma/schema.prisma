@@ -16,12 +16,13 @@ model User {
   email            String             @unique
   nis              String?            @unique
   password         String?
+  profilePicture   String?            @map("profile_picture")
   roleId           String             @map("role_id")
   createdAt        DateTime           @default(now()) @map("created_at")
   updatedAt        DateTime           @default(now()) @map("updated_at")
   refreshTokens    RefreshToken[]
   role             Role               @relation(fields: [roleId], references: [id])
-  UserQuizResponse UserQuizResponse[]
+  userQuizResponse UserQuizResponse[]
 }
 
 model RefreshToken {
