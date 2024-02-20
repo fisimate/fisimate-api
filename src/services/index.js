@@ -6,3 +6,8 @@ export { default as materialBankService } from "./materialBank.service.js";
 export { default as formulaBankService } from "./formulaBank.service.js";
 export { default as simulationService } from "./simulation.service.js";
 export { default as materialService } from "./material.service.js";
+export { default as quizService } from "./quiz.service.js";
+export { default as questionService } from "./question.service.js";
+export { default as quizOptionService } from "./quizOption.service.js";
+export { default as quizReviewService } from "./quizReview.service.js";
+export { default as userQuizResponseService } from "./userQuizResponse.service.js";

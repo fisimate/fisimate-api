@@ -6,3 +6,5 @@ export { default as materialBankController } from "./materialBank.controller.js"
 export { default as formulaBankController } from "./formulaBank.controller.js";
 export { default as simulationController } from "./simulation.controller.js";
 export { default as materialController } from "./material.controller.js";
+export { default as questionController } from "./question.controller.js";
+export { default as quizController } from "./quiz.controller.js";
