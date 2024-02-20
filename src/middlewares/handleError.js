@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import multer from "multer";
 
 const errorHandlerMiddleware = (err, req, res, next) => {
   let customError = {
@@ -34,6 +35,9 @@ const errorHandlerMiddleware = (err, req, res, next) => {
   } else if (error.name === "TokenExpiredError") {
     customError.statusCode = 401;
     customError.message = `Token expired!`;
+  } else if (err instanceof multer.MulterError) {
+    customError.statusCode = 400;
+    customError.message = "Invalid file format!";
   }
 
   return res.status(customError.statusCode).json({
