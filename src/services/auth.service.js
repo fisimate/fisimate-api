@@ -106,16 +106,4 @@ const refreshToken = async (req) => {
   return token;
 };
 
-const logout = async (req) => {
-  const user = req.user;
-
-  await prisma.refreshToken.deleteMany({
-    where: {
-      userId: user.id,
-    },
-  });
-
-  return;
-};
-
 export default { login, register, refreshToken, logout };
