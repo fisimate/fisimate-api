@@ -1,5 +1,5 @@
 const formatZodIssue = (issue) => {
-  const { path, message } = issue;
+  const { message } = issue;
 
   return `${message}`;
 };

@@ -4,7 +4,8 @@ import examBankSeed from "./examBank.seed.js";
 import formulaBankSeed from "./formulaBank.seed.js";
 import materialSeed from "./material.seed.js";
 import materialBankSeed from "./materialBank.seed.js";
-import simulationSeed from "./simulation.seeder.js";
+import quizSeed from "./quiz.seed.js";
+import simulationSeed from "./simulation.seed.js";
 import userSeed from "./user.seed.js";
 
 async function main() {
@@ -19,6 +20,8 @@ async function main() {
   const simulations = await simulationSeed(createdChapters);
 
   await materialSeed(simulations);
+
+  await quizSeed(simulations);
 }
 
 main()
