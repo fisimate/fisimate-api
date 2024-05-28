@@ -118,13 +118,14 @@ model Quiz {
 }
 
 model Question {
-  id          String       @id @default(uuid())
-  text        String
-  quizId      String       @map("quiz_id")
-  quiz        Quiz         @relation(fields: [quizId], references: [id])
-  createdAt   DateTime     @default(now()) @map("created_at")
-  updatedAt   DateTime     @default(now()) @map("updated_at")
-  quizOptions QuizOption[]
+  id               String             @id @default(uuid())
+  text             String
+  quizId           String             @map("quiz_id")
+  quiz             Quiz               @relation(fields: [quizId], references: [id])
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedAt        DateTime           @default(now()) @map("updated_at")
+  quizOptions      QuizOption[]
+  UserQuizResponse UserQuizResponse[]
 }
 
 model QuizOption {
@@ -147,12 +148,14 @@ model QuizReview {
 }
 
 model UserQuizResponse {
-  id        String   @id @default(uuid())
-  score     Float
-  quizId    String   @map("quiz_id")
-  quiz      Quiz     @relation(fields: [quizId], references: [id])
-  userId    String   @map("user_id")
-  user      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
+  id         String   @id @default(uuid())
+  score      Float
+  quizId     String   @map("quiz_id")
+  quiz       Quiz     @relation(fields: [quizId], references: [id])
+  questionId String   @map("question_id")
+  question   Question @relation(fields: [questionId], references: [id])
+  userId     String   @map("user_id")
+  user       User     @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @map("updated_at")
 }
