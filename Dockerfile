@@ -4,10 +4,10 @@ WORKDIR /usr/src/app
 
 COPY package.json yarn.lock ./
 
+RUN yarn install --production
+
 COPY . .
 
-RUN yarn install
+CMD [ "node", "./src/index.js" ]
 
 EXPOSE 8080
-
-CMD [ "yarn", "start" ]
