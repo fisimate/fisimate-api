@@ -8,6 +8,8 @@ RUN yarn install --production
 
 COPY . .
 
+ENV PORT 8080
+
 CMD [ "node", "./src/index.js" ]
 
 EXPOSE 8080
