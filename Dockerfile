@@ -10,6 +10,8 @@ COPY . .
 
 ENV PORT 8080
 
+ENV HOST 0.0.0.0
+
 CMD [ "node", "./src/index.js" ]
 
 EXPOSE 8080
