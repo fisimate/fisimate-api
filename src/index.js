@@ -13,7 +13,7 @@ import xss from "./middlewares/xss.js";
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 9000;
+const port = process.env.PORT || 8080;
 
 // const options = {
 //   key: fs.readFileSync(path.join(configs.certLocation, "key.pem")),
