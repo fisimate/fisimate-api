@@ -106,4 +106,4 @@ const refreshToken = async (req) => {
   return token;
 };
 
-export default { login, register, refreshToken, logout };
+export default { login, register, refreshToken };
