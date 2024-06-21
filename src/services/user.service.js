@@ -4,6 +4,7 @@ import bucket from "../lib/bucket.js";
 import randomString from "../lib/crypto.js";
 import prisma from "../lib/prisma.js";
 import exclude from "../utils/exclude.js";
+import path from "path";
 
 const updateProfile = async (req) => {
   const { email, fullname, nis } = req.body;
@@ -87,7 +88,8 @@ const updateProfilePicture = async (req) => {
     throw new BadRequestError("File belum diupload!");
   }
 
-  const randomName = randomString(14);
+  const extension = path.extname(req.file.originalname);
+  const randomName = randomString(14) + extension;
 
   const blob = bucket.file(`profile_pictures/${randomName}`);
   const blobStream = blob.createWriteStream({ resumable: true });
