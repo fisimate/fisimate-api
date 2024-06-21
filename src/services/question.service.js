@@ -47,10 +47,38 @@ const deleteQuestion = async (questionId) => {
   });
 };
 
+const answer = async (questionId, quizOptionId) => {
+  const checkAnswer = await prisma.quizOption.findFirst({
+    where: {
+      questionId,
+      id: quizOptionId,
+      isCorrect: true,
+    },
+    include: {
+      question: {
+        select: {
+          quizId: true,
+        },
+      },
+    },
+  });
+
+  if (checkAnswer) {
+    // cek user sudah pernah mengisi kuis atau belum, calculate total semua kuis, jika benar skor += nilai per question
+    await prisma.userQuizResponse.upsert({
+      where: {
+        quizId: checkAnswer.question.quizId,
+      },
+      update: {},
+    });
+  }
+};
+
 export default {
   getAllQuestions,
   getOneQuestion,
   createQuestion,
   updateQuestion,
   deleteQuestion,
+  answer,
 };
