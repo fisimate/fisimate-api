@@ -35,7 +35,7 @@ const updateProfilePicture = async (req, res, next) => {
   try {
     const result = await userService.updateProfilePicture(req);
 
-    return apiSuccess(res, "Berhasil update foto profile!".result);
+    return apiSuccess(res, "Berhasil update foto profile!", result);
   } catch (error) {
     next(error);
   }

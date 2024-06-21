@@ -92,26 +92,28 @@ const updateProfilePicture = async (req) => {
   const blob = bucket.file(`profile_pictures/${randomName}`);
   const blobStream = blob.createWriteStream({ resumable: true });
 
-  blobStream.on("error", (err) => {
-    throw new Error("Server error, tidak bisa upload image");
-  });
-
-  blobStream.on("finish", async () => {
-    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
-
-    const updatedUser = await prisma.user.update({
-      where: {
-        id,
-      },
-      data: {
-        profilePicture: publicUrl,
-      },
+  return new Promise((resolve, reject) => {
+    blobStream.on("error", (err) => {
+      reject(new Error("Server error, tidak bisa upload image"));
     });
 
-    return exclude(updatedUser, ["password"]);
-  });
+    blobStream.on("finish", async () => {
+      const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
 
-  blobStream.end(req.file.buffer);
+      try {
+        const updatedUser = await prisma.user.update({
+          where: { id },
+          data: { profilePicture: publicUrl },
+        });
+
+        resolve(exclude(updatedUser, ["password"]));
+      } catch (error) {
+        reject(new Error("System error, tidak bisa update user"));
+      }
+    });
+
+    blobStream.end(req.file.buffer);
+  });
 };
 
 export default {
