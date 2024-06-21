@@ -36,7 +36,12 @@ const updateProfile = z.object({
   }),
 });
 
+const updatePicture = z.object({
+  file: z.instanceof(Buffer, { message: "File is required" }),
+});
+
 export default {
   changePassword,
   updateProfile,
+  updatePicture,
 };

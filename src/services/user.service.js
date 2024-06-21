@@ -1,5 +1,7 @@
 import BadRequestError from "../errors/badRequest.js";
 import { compare, encrypt } from "../lib/bcrypt.js";
+import bucket from "../lib/bucket.js";
+import randomString from "../lib/crypto.js";
 import prisma from "../lib/prisma.js";
 import exclude from "../utils/exclude.js";
 
@@ -78,8 +80,43 @@ const getOneUser = async (req) => {
   return exclude(user, ["password"]);
 };
 
+const updateProfilePicture = async (req) => {
+  const { id } = req.user;
+
+  if (!req.file) {
+    throw new BadRequestError("File belum diupload!");
+  }
+
+  const randomName = randomString(14);
+
+  const blob = bucket.file(`profile_pictures/${randomName}`);
+  const blobStream = blob.createWriteStream({ resumable: true });
+
+  blobStream.on("error", (err) => {
+    throw new Error("Server error, tidak bisa upload image");
+  });
+
+  blobStream.on("finish", async () => {
+    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+
+    const updatedUser = await prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        profilePicture: publicUrl,
+      },
+    });
+
+    return exclude(updatedUser, ["password"]);
+  });
+
+  blobStream.end(req.file.buffer);
+};
+
 export default {
   updateProfile,
   changePassword,
   getOneUser,
+  updateProfilePicture,
 };
