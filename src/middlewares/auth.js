@@ -4,7 +4,7 @@ import prisma from "../lib/prisma.js";
 
 export const authorizeRoles = (...roles) => {
   return (req, res, next) => {
-    if (!roles.includes(req.user.role.name)) {
+    if (!roles.includes(req.user.role)) {
       throw new UnauthenticatedError("Permission denied");
     }
 
@@ -42,6 +42,7 @@ export const authenticateUser = async (req, res, next) => {
       id: payload.id,
       fullname: payload.fullname,
       email: payload.email,
+      role: payload.role.name,
     };
 
     next();
