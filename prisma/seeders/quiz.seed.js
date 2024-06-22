@@ -1,7 +1,7 @@
 import configs from "../../src/configs/index.js";
 import prisma from "../../src/lib/prisma.js";
 
-const quizSeed = async (simulations) => {
+const quizSeed = async (simulations, createdUsers) => {
   const quizzes = [
     // quiz simulation 0
     {
@@ -184,6 +184,50 @@ const quizSeed = async (simulations) => {
 
   await prisma.quizReview.createMany({
     data: reviews,
+  });
+  const createdQuizOptions = await prisma.quizOption.findMany();
+  const userId = createdUsers[0].id; // Assuming you're using the first user
+
+  const quizAttempts = [
+    {
+      quizId: createdQuiz[0].id,
+      userId: userId,
+      score: 100,
+      attemptAt: new Date(),
+    },
+  ];
+
+  await prisma.quizAttempt.createMany({
+    data: quizAttempts,
+  });
+
+  const createdQuizAttempts = await prisma.quizAttempt.findMany();
+
+  const userQuizResponses = [
+    {
+      quizAttemptId: createdQuizAttempts[0].id,
+      questionId: createdQuestion[0].id,
+      selectedOptionId: createdQuizOptions[3].id, // Correct option for question 0
+    },
+    {
+      quizAttemptId: createdQuizAttempts[0].id,
+      questionId: createdQuestion[1].id,
+      selectedOptionId: createdQuizOptions[6].id, // Correct option for question 1
+    },
+    {
+      quizAttemptId: createdQuizAttempts[0].id,
+      questionId: createdQuestion[2].id,
+      selectedOptionId: createdQuizOptions[8].id, // Correct option for question 2
+    },
+    {
+      quizAttemptId: createdQuizAttempts[0].id,
+      questionId: createdQuestion[3].id,
+      selectedOptionId: createdQuizOptions[11].id, // Correct option for question 3
+    },
+  ];
+
+  await prisma.userQuizResponse.createMany({
+    data: userQuizResponses,
   });
 };
 
