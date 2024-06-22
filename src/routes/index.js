@@ -6,6 +6,7 @@ import materialBankRoute from "./materialBank.route.js";
 import formulaBankRoute from "./formulaBank.route.js";
 import simulationRoute from "./simulation.route.js";
 import chapterRoute from "./chapter.route.js";
+import dashboardRoute from "./dashboard.route.js";
 
 const router = express.Router();
 
@@ -37,6 +38,10 @@ const defaultRoutes = [
   {
     path: "/chapters",
     route: chapterRoute,
+  },
+  {
+    path: "/dashboard",
+    route: dashboardRoute,
   },
 ];
 
