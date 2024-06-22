@@ -11,18 +11,20 @@ datasource db {
 }
 
 model User {
-  id               String             @id @default(uuid())
-  fullname         String
-  email            String             @unique
-  nis              String?            @unique
-  password         String?
-  profilePicture   String?            @map("profile_picture")
-  roleId           String             @map("role_id")
-  createdAt        DateTime           @default(now()) @map("created_at")
-  updatedAt        DateTime           @default(now()) @map("updated_at")
-  refreshTokens    RefreshToken[]
-  role             Role               @relation(fields: [roleId], references: [id])
-  userQuizResponse UserQuizResponse[]
+  id             String         @id @default(uuid())
+  fullname       String
+  email          String         @unique
+  nis            String?        @unique
+  password       String?
+  profilePicture String?        @map("profile_picture")
+  roleId         String         @map("role_id")
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @default(now()) @map("updated_at")
+  refreshTokens  RefreshToken[]
+  role           Role           @relation(fields: [roleId], references: [id])
+  quizAttempt    QuizAttempt[]
+
+  @@index([email])
 }
 
 model RefreshToken {
@@ -32,6 +34,8 @@ model RefreshToken {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @default(now()) @map("updated_at")
   user         User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
 
 model Role {
@@ -61,6 +65,8 @@ model ExamBank {
   chapter   Chapter  @relation(fields: [chapterId], references: [id])
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@index([chapterId])
 }
 
 model MaterialBank {
@@ -72,6 +78,8 @@ model MaterialBank {
   chapter   Chapter  @relation(fields: [chapterId], references: [id])
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@index([chapterId])
 }
 
 model FormulaBank {
@@ -83,6 +91,8 @@ model FormulaBank {
   chapter   Chapter  @relation(fields: [chapterId], references: [id])
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@index([chapterId])
 }
 
 model Simulation {
@@ -95,6 +105,8 @@ model Simulation {
   updatedAt DateTime   @default(now()) @map("updated_at")
   materials Material[]
   quizzes   Quiz[]
+
+  @@index([chapterId])
 }
 
 model Material {
@@ -104,17 +116,21 @@ model Material {
   simulation   Simulation @relation(fields: [simulationId], references: [id])
   createdAt    DateTime   @default(now()) @map("created_at")
   updatedAt    DateTime   @default(now()) @map("updated_at")
+
+  @@index([simulationId])
 }
 
 model Quiz {
-  id                String             @id @default(uuid())
-  simulationId      String             @map("simulation_id")
-  simulation        Simulation         @relation(fields: [simulationId], references: [id])
-  createdAt         DateTime           @default(now()) @map("created_at")
-  updatedAt         DateTime           @default(now()) @map("updated_at")
-  quizReviews       QuizReview[]
-  userQuizResponses UserQuizResponse[]
-  questions         Question[]
+  id           String        @id @default(uuid())
+  simulationId String        @map("simulation_id")
+  simulation   Simulation    @relation(fields: [simulationId], references: [id])
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @default(now()) @map("updated_at")
+  quizReviews  QuizReview[]
+  questions    Question[]
+  quizAttempt  QuizAttempt[]
+
+  @@index([simulationId])
 }
 
 model Question {
@@ -125,7 +141,9 @@ model Question {
   createdAt        DateTime           @default(now()) @map("created_at")
   updatedAt        DateTime           @default(now()) @map("updated_at")
   quizOptions      QuizOption[]
-  UserQuizResponse UserQuizResponse[]
+  userQuizResponse UserQuizResponse[]
+
+  @@index([quizId])
 }
 
 model QuizOption {
@@ -136,6 +154,8 @@ model QuizOption {
   question   Question @relation(fields: [questionId], references: [id])
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @default(now()) @map("updated_at")
+
+  @@index([questionId])
 }
 
 model QuizReview {
@@ -145,17 +165,27 @@ model QuizReview {
   quiz      Quiz     @relation(fields: [quizId], references: [id])
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@index([quizId])
 }
 
 model UserQuizResponse {
-  id         String   @id @default(uuid())
-  score      Float
-  quizId     String   @map("quiz_id")
-  quiz       Quiz     @relation(fields: [quizId], references: [id])
-  questionId String   @map("question_id")
-  question   Question @relation(fields: [questionId], references: [id])
-  userId     String   @map("user_id")
-  user       User     @relation(fields: [userId], references: [id])
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @default(now()) @map("updated_at")
+  id             String      @id @default(uuid())
+  quizAttemptId  String      @map("quiz_attempt_id")
+  questionId     String
+  selectedOption String
+  correctOption  String
+  quizAttempt    QuizAttempt @relation(fields: [quizAttemptId], references: [id])
+  question       Question    @relation(fields: [questionId], references: [id])
+}
+
+model QuizAttempt {
+  id               String             @id @default(uuid())
+  quizId           String             @map("quiz_id")
+  userId           String             @map("user_id")
+  score            Float
+  attemptAt        DateTime           @map("attempt_at")
+  quiz             Quiz               @relation(fields: [quizId], references: [id])
+  user             User               @relation(fields: [userId], references: [id])
+  userQuizResponse UserQuizResponse[]
 }
