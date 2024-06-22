@@ -36,6 +36,7 @@ const dashboard = async () => {
           email: true,
           fullname: true,
           nis: true,
+          profilePicture: true,
           role: {
             select: {
               name: true,
