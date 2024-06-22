@@ -3,7 +3,7 @@ import apiSuccess from "../utils/apiSuccess.js";
 
 const index = async (req, res, next) => {
   try {
-    const result = await dashboardService.dashboard(req);
+    const result = await dashboardService.dashboard();
 
     return apiSuccess(
       req,

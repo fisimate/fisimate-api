@@ -1,6 +1,6 @@
-import prisma from "../lib/prisma";
+import prisma from "../lib/prisma.js";
 
-const dashboard = async (req) => {
+const dashboard = async () => {
   const totalStudents = await prisma.user.count({
     where: {
       role: {
