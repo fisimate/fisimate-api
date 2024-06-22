@@ -6,7 +6,7 @@ const index = async (req, res, next) => {
     const result = await dashboardService.dashboard();
 
     return apiSuccess(
-      req,
+      res,
       "Berhasil mendapatkan data untuk dashboard!",
       result
     );
@@ -19,7 +19,7 @@ const leaderboard = async (req, res, next) => {
   try {
     const result = await dashboardService.getLeaderboard();
 
-    return apiSuccess(req, "Berhasil mendapatkan data leaderboard", result);
+    return apiSuccess(res, "Berhasil mendapatkan data leaderboard", result);
   } catch (error) {
     next(error);
   }
