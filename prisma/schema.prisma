@@ -147,13 +147,14 @@ model Question {
 }
 
 model QuizOption {
-  id         String   @id @default(uuid())
-  text       String
-  isCorrect  Boolean  @map("is_correct")
-  questionId String   @map("question_id")
-  question   Question @relation(fields: [questionId], references: [id])
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @default(now()) @map("updated_at")
+  id               String             @id @default(uuid())
+  text             String
+  isCorrect        Boolean            @map("is_correct")
+  questionId       String             @map("question_id")
+  question         Question           @relation(fields: [questionId], references: [id])
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedAt        DateTime           @default(now()) @map("updated_at")
+  userQuizResponse UserQuizResponse[]
 
   @@index([questionId])
 }
@@ -170,13 +171,13 @@ model QuizReview {
 }
 
 model UserQuizResponse {
-  id             String      @id @default(uuid())
-  quizAttemptId  String      @map("quiz_attempt_id")
-  questionId     String
-  selectedOption String
-  correctOption  String
-  quizAttempt    QuizAttempt @relation(fields: [quizAttemptId], references: [id])
-  question       Question    @relation(fields: [questionId], references: [id])
+  id               String      @id @default(uuid())
+  quizAttemptId    String      @map("quiz_attempt_id")
+  questionId       String
+  selectedOptionId String
+  quizAttempt      QuizAttempt @relation(fields: [quizAttemptId], references: [id])
+  question         Question    @relation(fields: [questionId], references: [id])
+  selectedOption   QuizOption  @relation(fields: [selectedOptionId], references: [id])
 }
 
 model QuizAttempt {
