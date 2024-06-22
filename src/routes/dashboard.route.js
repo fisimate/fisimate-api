@@ -10,5 +10,10 @@ router.get(
   authorizeRoles("admin"),
   dashboardController.index
 );
+router.get(
+  "/leaderboard",
+  authenticateUser,
+  dashboardController.index
+);
 
 export default router;

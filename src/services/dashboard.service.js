@@ -69,6 +69,37 @@ const dashboard = async (req) => {
   };
 };
 
+const getLeaderboard = async () => {
+  const leaderboard = await prisma.quizAttempt.groupBy({
+    by: ["userId"],
+    _sum: {
+      score: true,
+    },
+    orderBy: {
+      _sum: {
+        score: "desc",
+      },
+    },
+    take: 5,
+  });
+
+  // User data for leaderboard
+  const leaderboardWithUsers = await Promise.all(
+    leaderboard.map(async (entry) => {
+      const user = await prisma.user.findUnique({
+        where: { id: entry.userId },
+      });
+      return {
+        ...entry,
+        user,
+      };
+    })
+  );
+
+  return leaderboardWithUsers;
+};
+
 export default {
   dashboard,
+  getLeaderboard,
 };
