@@ -31,6 +31,17 @@ const dashboard = async () => {
     leaderboard.map(async (entry) => {
       const user = await prisma.user.findUnique({
         where: { id: entry.userId },
+        select: {
+          id: true,
+          email: true,
+          fullname: true,
+          nis: true,
+          role: {
+            select: {
+              name: true,
+            },
+          },
+        },
       });
       return {
         ...entry,
@@ -88,6 +99,17 @@ const getLeaderboard = async () => {
     leaderboard.map(async (entry) => {
       const user = await prisma.user.findUnique({
         where: { id: entry.userId },
+        select: {
+          id: true,
+          email: true,
+          fullname: true,
+          nis: true,
+          role: {
+            select: {
+              name: true,
+            },
+          },
+        },
       });
       return {
         ...entry,
