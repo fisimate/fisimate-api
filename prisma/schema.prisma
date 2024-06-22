@@ -23,8 +23,6 @@ model User {
   refreshTokens  RefreshToken[]
   role           Role           @relation(fields: [roleId], references: [id])
   quizAttempt    QuizAttempt[]
-
-  @@index([email])
 }
 
 model RefreshToken {
