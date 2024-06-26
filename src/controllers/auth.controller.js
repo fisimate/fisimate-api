@@ -183,5 +183,4 @@ export default {
   getFacebookUrl,
   facebookCallback,
   refreshToken,
-  logout,
 };

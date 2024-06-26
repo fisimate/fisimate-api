@@ -24,18 +24,24 @@ const userSeed = async () => {
       email: "siswa@gmail.com",
       nis: "33421221",
       password: await encrypt("siswa123"),
+      profilePicture:
+        "https://static.independent.co.uk/2024/05/02/23/newFile-1.jpg",
       roleId: createdRoles[2].id,
     },
     {
       fullname: "User Guru",
       email: "guru@gmail.com",
       password: await encrypt("guru12345"),
+      profilePicture:
+        "https://static.independent.co.uk/2024/05/02/23/newFile-1.jpg",
       roleId: createdRoles[1].id,
     },
     {
       fullname: "Admin",
       email: "admin@gmail.com",
       password: await encrypt("admin"),
+      profilePicture:
+        "https://static.independent.co.uk/2024/05/02/23/newFile-1.jpg",
       roleId: createdRoles[0].id,
     },
   ];
@@ -44,7 +50,13 @@ const userSeed = async () => {
     data: users,
   });
 
-  return;
+  return prisma.user.findMany({
+    where: {
+      role: {
+        name: "user",
+      },
+    },
+  });
 };
 
 export default userSeed;

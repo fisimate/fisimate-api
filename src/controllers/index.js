@@ -8,3 +8,4 @@ export { default as simulationController } from "./simulation.controller.js";
 export { default as materialController } from "./material.controller.js";
 export { default as questionController } from "./question.controller.js";
 export { default as quizController } from "./quiz.controller.js";
+export { default as dashboardController } from "./dashboard.controller.js";

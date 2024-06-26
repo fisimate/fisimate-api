@@ -33,7 +33,14 @@ const getMaterialBanks = async () => {
   };
 };
 
+const createMaterial = async (data) => {
+  return await prisma.materialBank.create({
+    data,
+  });
+};
+
 export default {
   getOneMaterialBank,
   getMaterialBanks,
+  createMaterial,
 };

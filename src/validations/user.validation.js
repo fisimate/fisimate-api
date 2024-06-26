@@ -36,7 +36,19 @@ const updateProfile = z.object({
   }),
 });
 
+const updatePicture = z.object({
+  file: z.object({
+    mimetype: z
+      .string()
+      .refine((mimetype) => mimetype.startsWith("image/"), {
+        message: "Format file tidak valid",
+      }),
+    buffer: z.instanceof(Buffer, { message: "File is required" }),
+  }),
+});
+
 export default {
   changePassword,
   updateProfile,
+  updatePicture,
 };

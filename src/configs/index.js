@@ -15,5 +15,6 @@ export default {
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
   googleClientRedirect: process.env.GOOGLE_CLIENT_REDIRECT,
   certLocation: process.env.CERT_LOCATION,
-  appUrl: process.env.APP_URL
+  appUrl: process.env.APP_URL,
+  bucketName: process.env.BUCKET_NAME
 };

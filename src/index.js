@@ -13,7 +13,7 @@ import xss from "./middlewares/xss.js";
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 9000;
+const port = process.env.PORT || 8080;
 
 // const options = {
 //   key: fs.readFileSync(path.join(configs.certLocation, "key.pem")),
@@ -43,8 +43,6 @@ app.use(handleNotFoundRoute);
 // const server = https.createServer(options, app);
 const server = http.createServer(app);
 
-server.listen(port);
-
-server.on("listening", () => {
+server.listen(port, "0.0.0.0", () => {
   console.log(`Server running on port ${port}`);
 });

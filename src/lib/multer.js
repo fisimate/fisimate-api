@@ -2,7 +2,7 @@ import multer from "multer";
 import diskStorage from "../utils/diskStorage.js";
 
 const upload = multer({
-  storage: diskStorage,
+  storage: multer.memoryStorage(),
   limits: {
     fileSize: 3000000,
   },

@@ -9,7 +9,7 @@ import simulationSeed from "./simulation.seed.js";
 import userSeed from "./user.seed.js";
 
 async function main() {
-  await userSeed();
+  const createdUsers = await userSeed();
 
   const createdChapters = await chapterSeed();
 
@@ -21,7 +21,7 @@ async function main() {
 
   await materialSeed(simulations);
 
-  await quizSeed(simulations);
+  await quizSeed(simulations, createdUsers);
 }
 
 main()
