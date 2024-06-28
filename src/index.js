@@ -9,7 +9,7 @@ import routes from "./routes/index.js";
 import handleNotFoundRoute from "./middlewares/notFoundRoute.js";
 import compression from "compression";
 import xss from "./middlewares/xss.js";
-import { Server } from "socket.io";
+import setupSocket from "./socket.js";
 
 dotenv.config();
 
@@ -43,16 +43,8 @@ app.use(handleNotFoundRoute);
 
 // const server = https.createServer(options, app);
 const server = http.createServer(app);
-const io = new Server(server);
 
-io.on("connection", (socket) => {
-  console.log(`User ${socket.id} connected!`);
-
-  socket.on("generate", () => {
-    const responseMessage = `Response to ${socket.id}`;
-    socket.emit("response", responseMessage);
-  });
-});
+setupSocket(server);
 
 server.listen(port, "0.0.0.0", () => {
   console.log(`Server running on port ${port}`);
