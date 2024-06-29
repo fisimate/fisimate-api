@@ -43,13 +43,11 @@ const update = async (chapterId, data) => {
 };
 
 const remove = async (chapterId) => {
-  const chapter = await prisma.chapter.delete({
+  return await prisma.chapter.delete({
     where: {
-      di: chapterId,
+      id: chapterId,
     },
   });
-
-  return;
 };
 
 export default {

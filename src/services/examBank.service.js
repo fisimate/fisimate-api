@@ -33,7 +33,37 @@ const getExamBanks = async () => {
   };
 };
 
+const create = async (data) => {
+  const examBank = await prisma.examBank.create({
+    data,
+  });
+
+  return examBank;
+};
+
+const update = async (id, data) => {
+  const examBank = await prisma.examBank.update({
+    data,
+    where: {
+      id,
+    },
+  });
+
+  return examBank;
+};
+
+const remove = async (id) => {
+  return await prisma.examBank.delete({
+    where: {
+      id,
+    },
+  });
+};
+
 export default {
   getOneExamBank,
   getExamBanks,
+  create,
+  update,
+  remove,
 };

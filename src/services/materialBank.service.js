@@ -39,8 +39,29 @@ const createMaterial = async (data) => {
   });
 };
 
+const update = async (data) => {
+  const materialBank = await prisma.materialBank.update({
+    data,
+    where: {
+      id,
+    },
+  });
+
+  return materialBank;
+};
+
+const remove = async (id) => {
+  return await prisma.materialBank.delete({
+    where: {
+      id,
+    },
+  });
+};
+
 export default {
   getOneMaterialBank,
   getMaterialBanks,
   createMaterial,
+  update,
+  remove,
 };
