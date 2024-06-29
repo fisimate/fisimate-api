@@ -16,5 +16,6 @@ export default {
   googleClientRedirect: process.env.GOOGLE_CLIENT_REDIRECT,
   certLocation: process.env.CERT_LOCATION,
   appUrl: process.env.APP_URL,
-  bucketName: process.env.BUCKET_NAME
+  bucketName: process.env.BUCKET_NAME,
+  geminiAPIKey: process.env.GEMINI_API_KEY
 };
