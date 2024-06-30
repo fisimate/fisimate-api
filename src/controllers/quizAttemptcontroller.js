@@ -50,15 +50,26 @@ const getAttemptByQuizId = async (req, res, next) => {
 // Create attempt
 const createAttempt = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const { responses } = req.body;
+    const { quizId, userId, responses } = req.body;
+
+    // Step 1: Create a new quiz attempt
+    const quizAttempt = await prisma.quizAttempt.create({
+      data: {
+        quizId,
+        userId,
+        score: 0, // Initial score is 0, will be updated after evaluating responses
+        attemptAt: new Date(),
+      },
+    });
+
+    const attemptId = quizAttempt.id;
 
     // Save user responses
     const responsePromises = responses.map(async (response) => {
       const { questionId, selectedOptionId } = response;
       return prisma.userQuizResponse.create({
         data: {
-          quizAttemptId: id,
+          quizAttemptId: attemptId,
           questionId,
           selectedOptionId,
         },
