@@ -23,10 +23,10 @@ const getAllAttempts = async (req, res, next) => {
 
 const getAttemptByQuizId = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { quizId } = req.params;
 
     const attempt = await prisma.quizAttempt.findUnique({
-      where: { id },
+      where: { quizId },
       include: {
         quiz: {
           include: {

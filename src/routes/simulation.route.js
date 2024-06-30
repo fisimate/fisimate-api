@@ -1,6 +1,7 @@
 import express from "express";
 import {
   materialController,
+  quizController,
   simulationController,
 } from "../controllers/index.js";
 import { authenticateUser } from "../middlewares/auth.js";
@@ -18,7 +19,11 @@ route.get(
 );
 
 // quiz route
-// route.get("/:simulationId/quizzes", authenticateUser, quizController.index);
+route.get(
+  "/:simulationId/quizzes",
+  authenticateUser,
+  quizController.getQuizBySimulation
+);
 
 // question route
 
