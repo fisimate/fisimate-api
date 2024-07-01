@@ -11,9 +11,14 @@ const setupSocket = (server) => {
       try {
         const { text } = message;
 
+        // make a prompt + text
         const geminiResponse = await geminiModel.generateContent(text);
 
         const result = await geminiResponse.response;
+
+        // convert to json
+
+        // make logic to create question and option
 
         socket.emit("response", result.text());
       } catch (error) {
