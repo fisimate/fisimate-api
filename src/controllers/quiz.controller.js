@@ -11,7 +11,11 @@ const getQuizBySimulation = async (req, res, next) => {
         simulationId,
       },
       include: {
-        questions: true,
+        questions: {
+          include: {
+            quizOptions: true,
+          },
+        },
       },
     });
 
