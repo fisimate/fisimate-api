@@ -11,6 +11,11 @@ router.put("/:id", authenticateUser, quizController.update);
 router.delete("/:id", authenticateUser, quizController.destroy);
 router.post("/attempt", authenticateUser, quizAttemptController.createAttempt);
 router.get(
+  "/result/:quizId",
+  authenticateUser,
+  quizAttemptController.getUserScore
+);
+router.get(
   "/attempt/me",
   authenticateUser,
   quizAttemptController.getAllAttempts

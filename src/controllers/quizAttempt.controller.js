@@ -65,6 +65,21 @@ const createAttempt = async (req, res, next) => {
       where: { id: quizId },
     });
 
+    // Check if the user has already attempted this quiz
+    const existingAttempt = await prisma.quizAttempt.findFirst({
+      where: {
+        quizId,
+        userId,
+      },
+    });
+
+    if (existingAttempt) {
+      return res.status(400).json({
+        success: false,
+        message: "User has already attempted this quiz.",
+      });
+    }
+
     // Validate responses
     if (!Array.isArray(responses) || responses.length === 0) {
       return res.status(400).json({
@@ -171,8 +186,72 @@ const createAttempt = async (req, res, next) => {
   }
 };
 
+const getUserScore = async (req, res, next) => {
+  try {
+    const { id: userId } = req.user;
+    const { quizId } = req.params;
+
+    // Fetch the quiz attempt
+    const quizAttempt = await prisma.quizAttempt.findFirst({
+      where: {
+        quizId,
+        userId,
+      },
+      include: {
+        userQuizResponse: {
+          include: {
+            question: true,
+            selectedOption: true,
+          },
+        },
+      },
+    });
+
+    if (!quizAttempt) {
+      return res.status(404).json({
+        success: false,
+        message: "Quiz attempt not found.",
+      });
+    }
+
+    // Calculate correct and incorrect responses
+    const correctResponses = quizAttempt.userQuizResponse.filter(
+      (response) => response.selectedOption.isCorrect
+    );
+    const incorrectResponses = quizAttempt.userQuizResponse.filter(
+      (response) => !response.selectedOption.isCorrect
+    );
+
+    // Prepare the result data
+    const result = {
+      score: quizAttempt.score,
+      correctResponses: correctResponses.map((response) => ({
+        questionId: response.question.id,
+        questionText: response.question.text,
+        selectedOptionId: response.selectedOption.id,
+        selectedOptionText: response.selectedOption.text,
+      })),
+      incorrectResponses: incorrectResponses.map((response) => ({
+        questionId: response.question.id,
+        questionText: response.question.text,
+        selectedOptionId: response.selectedOption.id,
+        selectedOptionText: response.selectedOption.text,
+      })),
+    };
+
+    return res.json({
+      success: true,
+      message: "Berhasil mendapatkan data skor",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   getAllAttempts,
   getAttemptByQuizId,
   createAttempt,
+  getUserScore,
 };
