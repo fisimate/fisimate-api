@@ -50,7 +50,9 @@ const getAttemptByQuizId = async (req, res, next) => {
 // Create attempt
 const createAttempt = async (req, res, next) => {
   try {
-    const { quizId, userId, responses } = req.body;
+    const { id: userId } = req.user;
+
+    const { quizId, responses } = req.body;
 
     // Step 1: Create a new quiz attempt
     const quizAttempt = await prisma.quizAttempt.create({

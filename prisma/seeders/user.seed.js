@@ -25,7 +25,7 @@ const userSeed = async () => {
       nis: "33421221",
       password: await encrypt("siswa123"),
       profilePicture:
-        "https://static.independent.co.uk/2024/05/02/23/newFile-1.jpg",
+        "https://storage.googleapis.com/fisibucket/profile_pictures/4b4aaafa156e86.jpg",
       roleId: createdRoles[2].id,
     },
     {
