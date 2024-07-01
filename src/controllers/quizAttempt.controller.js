@@ -1,9 +1,10 @@
 import prisma from "../lib/prisma.js";
 import apiSuccess from "../utils/apiSuccess.js";
 
+// history berdasarkan user yang login
 const getAllAttempts = async (req, res, next) => {
   try {
-    const { userId } = req.params;
+    const { id: userId } = req.user;
 
     const attempts = await prisma.quizAttempt.findMany({
       where: {
@@ -23,10 +24,16 @@ const getAllAttempts = async (req, res, next) => {
 
 const getAttemptByQuizId = async (req, res, next) => {
   try {
+    const { id: userId } = req.user;
     const { quizId } = req.params;
 
-    const attempt = await prisma.quizAttempt.findUnique({
-      where: { quizId },
+    const attempt = await prisma.quizAttempt.findFirstOrThrow({
+      where: {
+        quizId,
+        AND: {
+          userId,
+        },
+      },
       include: {
         quiz: {
           include: {
