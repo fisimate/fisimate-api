@@ -83,7 +83,7 @@ const createAttempt = async (req, res, next) => {
     // Calculate the number of correct responses
     const correctResponses = await prisma.userQuizResponse.findMany({
       where: {
-        quizAttemptId: id,
+        quizAttemptId: attemptId,
         selectedOption: { isCorrect: true },
       },
     });
