@@ -32,11 +32,16 @@ const getOne = async (chapterId) => {
 };
 
 const update = async (chapterId, data) => {
+  const slug = generateSlug(name);
+
   const chapter = await prisma.chapter.update({
     where: {
       id: chapterId,
     },
-    data,
+    data: {
+      name,
+      slug,
+    },
   });
 
   return chapter;
