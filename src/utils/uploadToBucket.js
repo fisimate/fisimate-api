@@ -1,8 +1,9 @@
 import bucket from "../lib/bucket.js";
+import randomString from "../lib/crypto.js";
 
 export default function uploadToBucket(file, folderPath) {
-  const randomString = generateRandomString(16);
-  const customFileName = `${Date.now()}-${randomString}-${file.originalname}`;
+  const fileExt = path.extname(file.originalname);
+  const customFileName = randomString(14) + fileExt;
   const filePath = folderPath
     ? `${folderPath}/${customFileName}`
     : customFileName; // Include the folder path in the file name
