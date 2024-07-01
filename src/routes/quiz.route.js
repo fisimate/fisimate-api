@@ -20,3 +20,5 @@ router.get(
   authenticateUser,
   quizAttemptController.getAttemptByQuizId
 );
+
+export default router;
