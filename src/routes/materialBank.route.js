@@ -1,6 +1,7 @@
 import express from "express";
 import { materialBankController } from "../controllers/index.js";
 import { authenticateUser } from "../middlewares/auth.js";
+import upload from "../lib/multer.js";
 
 const router = express.Router();
 
