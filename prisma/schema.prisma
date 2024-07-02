@@ -57,7 +57,7 @@ model Chapter {
 model ExamBank {
   id        String   @id @default(uuid())
   title     String
-  icon      String
+  icon      String   @db.Text
   filePath  String   @map("file_path") @db.Text
   chapterId String   @map("chapter_id")
   chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -70,7 +70,7 @@ model ExamBank {
 model MaterialBank {
   id        String   @id @default(uuid())
   title     String
-  icon      String
+  icon      String   @db.Text
   filePath  String   @map("file_path") @db.Text
   chapterId String   @map("chapter_id")
   chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -83,7 +83,7 @@ model MaterialBank {
 model FormulaBank {
   id        String   @id @default(uuid())
   title     String
-  icon      String
+  icon      String   @db.Text
   filePath  String   @map("file_path") @db.Text
   chapterId String   @map("chapter_id")
   chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -96,7 +96,7 @@ model FormulaBank {
 model Simulation {
   id        String     @id @default(uuid())
   title     String
-  icon      String
+  icon      String     @db.Text
   chapterId String     @map("chapter_id")
   chapter   Chapter    @relation(fields: [chapterId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   createdAt DateTime   @default(now()) @map("created_at")
