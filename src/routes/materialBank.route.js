@@ -6,5 +6,18 @@ const router = express.Router();
 
 router.get("/", authenticateUser, materialBankController.index);
 router.get("/:id", authenticateUser, materialBankController.show);
+router.post(
+  "/",
+  authenticateUser,
+  upload.fields([{ name: "icon" }, { name: "fileBankPath" }]),
+  materialBankController.create
+);
+router.put(
+  "/:id",
+  authenticateUser,
+  upload.fields([{ name: "icon" }, { name: "fileBankPath" }]),
+  materialBankController.update
+);
+router.delete("/:id", authenticateUser, materialBankController.destroy);
 
 export default router;

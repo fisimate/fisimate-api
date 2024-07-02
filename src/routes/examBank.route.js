@@ -5,15 +5,20 @@ import upload from "../lib/multer.js";
 
 const router = express.Router();
 
-router.get(
+router.get("/", authenticateUser, examBankController.index);
+router.get("/:id", authenticateUser, examBankController.show);
+router.post(
   "/",
   authenticateUser,
   upload.fields([{ name: "icon" }, { name: "fileBankPath" }]),
-  examBankController.index
+  examBankController.create
 );
-router.get("/:id", authenticateUser, examBankController.show);
-router.post("/", authenticateUser, examBankController.create);
-router.put("/:id", authenticateUser, examBankController.update);
+router.put(
+  "/:id",
+  authenticateUser,
+  upload.fields([{ name: "icon" }, { name: "fileBankPath" }]),
+  examBankController.update
+);
 router.delete("/:id", authenticateUser, examBankController.destroy);
 
 export default router;
