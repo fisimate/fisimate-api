@@ -5,26 +5,48 @@ import {
   simulationController,
 } from "../controllers/index.js";
 import { authenticateUser } from "../middlewares/auth.js";
+import upload from "../lib/multer.js";
 
-const route = express.Router();
+const router = express.Router();
 
-route.get("/", authenticateUser, simulationController.index);
-route.get("/:id", authenticateUser, simulationController.show);
+router.get("/", authenticateUser, simulationController.index);
+router.get("/:id", authenticateUser, simulationController.show);
+router.put(
+  "/:id",
+  authenticateUser,
+  upload.single("icon"),
+  simulationController.update
+);
 
 // material route
-route.get(
+router.get(
   "/:simulationId/materials",
   authenticateUser,
   materialController.show
 );
+router.post(
+  "/:simulationId/materials",
+  authenticateUser,
+  upload.single("filePath"),
+  materialController.create
+);
+router.put(
+  "/:simulationId/materials/:id",
+  authenticateUser,
+  upload.single("filePath"),
+  materialController.update
+);
+router.delete(
+  "/:simulationId/materials/:id",
+  authenticateUser,
+  materialController.destroy
+);
 
 // quiz route
-route.get(
+router.get(
   "/:simulationId/quizzes",
   authenticateUser,
   quizController.getQuizBySimulation
 );
 
-// question route
-
-export default route;
+export default router;
