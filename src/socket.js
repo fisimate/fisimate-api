@@ -11,8 +11,10 @@ const setupSocket = (server) => {
       try {
         const { text } = message;
 
+        const prompt = `Buatkan saya soal tentang ${text} dan berikan response dengan format: {"questions": "<<soal akan berada disini>>","options": [{"option": "<<pilihan jawaban 1>>","correct": <<boolean>>},{"option": "<<pilihan jawaban 2>>","correct": <<boolean>>},{"option": "<<pilihan jawaban 3>>","correct": <<boolean>>},{"option": "<<pilihan jawaban 4>>","correct": <<boolean>>}]}`;
+
         // make a prompt + text
-        const geminiResponse = await geminiModel.generateContent(text);
+        const geminiResponse = await geminiModel.generateContent(prompt);
 
         const result = await geminiResponse.response;
 
