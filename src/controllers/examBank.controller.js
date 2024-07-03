@@ -6,7 +6,11 @@ import prisma from "../lib/prisma.js";
 
 const getAll = async (req, res, next) => {
   try {
-    const examBanks = await prisma.examBank.findMany();
+    const examBanks = await prisma.examBank.findMany({
+      include: {
+        chapter: true
+      }
+    });
 
     return apiSuccess(res, "Berhasil mendapatkan data!", examBanks);
   } catch (error) {

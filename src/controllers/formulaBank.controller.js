@@ -6,7 +6,11 @@ import uploadToBucket from "../utils/uploadToBucket.js";
 
 const getAll = async (req, res, next) => {
   try {
-    const formulaBank = await prisma.formulaBank.findMany();
+    const formulaBank = await prisma.formulaBank.findMany({
+      include: {
+        chapter: true,
+      },
+    });
 
     return apiSuccess(res, "Berhasil mendapatkan data!", formulaBank);
   } catch (error) {
