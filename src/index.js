@@ -9,6 +9,7 @@ import routes from "./routes/index.js";
 import handleNotFoundRoute from "./middlewares/notFoundRoute.js";
 import compression from "compression";
 import xss from "./middlewares/xss.js";
+import setupSocket from "./socket.js";
 
 dotenv.config();
 
@@ -42,6 +43,8 @@ app.use(handleNotFoundRoute);
 
 // const server = https.createServer(options, app);
 const server = http.createServer(app);
+
+setupSocket(server);
 
 server.listen(port, "0.0.0.0", () => {
   console.log(`Server running on port ${port}`);

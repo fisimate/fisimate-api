@@ -1,4 +1,5 @@
 import prisma from "../lib/prisma.js";
+import generateSlug from "../utils/generateSlug.js";
 
 const getAlls = async () => {
   const chapters = await prisma.chapter.findMany();
@@ -7,8 +8,14 @@ const getAlls = async () => {
 };
 
 const create = async (data) => {
+  const { name } = data;
+  const slug = generateSlug(name);
+
   const chapter = await prisma.chapter.create({
-    data,
+    data: {
+      name,
+      slug,
+    },
   });
 
   return chapter;
@@ -25,24 +32,28 @@ const getOne = async (chapterId) => {
 };
 
 const update = async (chapterId, data) => {
+  const { name } = data;
+  const slug = generateSlug(name);
+
   const chapter = await prisma.chapter.update({
     where: {
       id: chapterId,
     },
-    data,
+    data: {
+      name,
+      slug,
+    },
   });
 
   return chapter;
 };
 
 const remove = async (chapterId) => {
-  const chapter = await prisma.chapter.delete({
+  return await prisma.chapter.delete({
     where: {
-      di: chapterId,
+      id: chapterId,
     },
   });
-
-  return;
 };
 
 export default {

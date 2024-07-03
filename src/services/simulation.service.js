@@ -41,7 +41,33 @@ const getOneSimulation = async (id) => {
   });
 };
 
+const create = async (data) => {
+  return await prisma.simulation.create({
+    data,
+  });
+};
+
+const update = async (id, data) => {
+  return await prisma.simulation.update({
+    data,
+    where: {
+      id,
+    },
+  });
+};
+
+const remove = async (id) => {
+  return await prisma.simulation.delete({
+    where: {
+      id,
+    },
+  });
+};
+
 export default {
   getAllSimulations,
   getOneSimulation,
+  create,
+  update,
+  remove,
 };

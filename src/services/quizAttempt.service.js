@@ -1,11 +1,11 @@
 import prisma from "../lib/prisma.js";
 
 const getAll = async () => {
-  return await prisma.quizOption.findMany();
+  return await prisma.quizAttempt.findMany();
 };
 
 const getOne = async (id) => {
-  return await prisma.quizOption.findFirstOrThrow({
+  return await prisma.quizAttempt.findUniqueOrThrow({
     where: {
       id,
     },
@@ -13,22 +13,22 @@ const getOne = async (id) => {
 };
 
 const create = async (data) => {
-  return await prisma.quizOption.create({
+  return await prisma.quizAttempt.create({
     data,
   });
 };
 
 const update = async (id, data) => {
-  return await prisma.quizOption.update({
+  return await prisma.quizAttempt.update({
+    data,
     where: {
       id,
     },
-    data,
   });
 };
 
 const remove = async (id) => {
-  return await prisma.quizOption.delete({
+  return await prisma.quizAttempt.delete({
     where: {
       id,
     },

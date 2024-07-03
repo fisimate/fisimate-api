@@ -33,7 +33,37 @@ const getFormulaBanks = async () => {
   };
 };
 
+const create = async (data) => {
+  const formulaBank = await prisma.formulaBank.create({
+    data,
+  });
+
+  return formulaBank;
+};
+
+const update = async (id, data) => {
+  const formulaBank = await prisma.formulaBank.update({
+    data,
+    where: {
+      id,
+    },
+  });
+
+  return formulaBank;
+};
+
+const remove = async (id) => {
+  return await prisma.formulaBank.delete({
+    where: {
+      id,
+    },
+  });
+};
+
 export default {
   getOneFormulaBank,
   getFormulaBanks,
+  create,
+  update,
+  remove,
 };
