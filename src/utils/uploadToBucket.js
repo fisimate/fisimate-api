@@ -1,5 +1,6 @@
 import bucket from "../lib/bucket.js";
 import randomString from "../lib/crypto.js";
+import path from "path";
 
 export default function uploadToBucket(file, folderPath) {
   const fileExt = path.extname(file.originalname);
