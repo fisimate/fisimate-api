@@ -1,5 +1,6 @@
 import { Server } from "socket.io";
 import geminiModel from "./lib/gemini.js";
+import prisma from "./lib/prisma.js";
 
 const setupSocket = (server) => {
   const io = new Server(server);
@@ -18,17 +19,46 @@ const setupSocket = (server) => {
 
         const result = await geminiResponse.response;
 
+        let response = result.text();
+
         // clear the response
-        if (result.startsWith("```json") && result.endsWith("```")) {
-          result = result.slice(7, -3).trim();
+        if (response.startsWith("```json") && response.endsWith("```")) {
+          response = response.slice(7, -3).trim();
         }
 
         // convert to json
-        const jsonResponse = JSON.parse(result.text());
-
-        // make logic to create question and option
+        const jsonResponse = JSON.parse(response);
 
         socket.emit("response", jsonResponse);
+      } catch (error) {
+        socket.emit("error", `Internal server Error ${error}`);
+      }
+    });
+
+    socket.on("save", async (message) => {
+      try {
+        const { quizId, questions } = message;
+
+        for (const questionData of questions) {
+          const question = await prisma.question.create({
+            data: {
+              quizId,
+              text: questionData.questions,
+            },
+          });
+
+          for (const optionData of questionData.options) {
+            await prisma.quizOption.create({
+              data: {
+                questionId: question.id,
+                text: optionData.option,
+                isCorrect: optionData.correct,
+              },
+            });
+          }
+        }
+
+        socket.emit("saveSuccess", "Question saved successfully!");
       } catch (error) {
         socket.emit("error", `Internal server Error ${error}`);
       }
