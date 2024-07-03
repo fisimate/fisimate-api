@@ -5,6 +5,7 @@ import upload from "../lib/multer.js";
 
 const router = express.Router();
 
+router.get("/all", authenticateUser, formulaBankController.getAll);
 router.get("/", authenticateUser, formulaBankController.index);
 router.get("/:id", authenticateUser, formulaBankController.show);
 router.post(

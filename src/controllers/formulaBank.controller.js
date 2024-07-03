@@ -4,6 +4,16 @@ import { formulaBankService } from "../services/index.js";
 import apiSuccess from "../utils/apiSuccess.js";
 import uploadToBucket from "../utils/uploadToBucket.js";
 
+const getAll = async (req, res, next) => {
+  try {
+    const formulaBank = await prisma.formulaBank.findMany();
+
+    return apiSuccess(res, "Berhasil mendapatkan data!", formulaBank);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const index = async (req, res, next) => {
   try {
     const formulaBanks = await formulaBankService.getFormulaBanks();
@@ -132,4 +142,5 @@ export default {
   create,
   update,
   destroy,
+  getAll,
 };

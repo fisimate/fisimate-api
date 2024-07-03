@@ -4,6 +4,16 @@ import { materialBankService } from "../services/index.js";
 import apiSuccess from "../utils/apiSuccess.js";
 import uploadToBucket from "../utils/uploadToBucket.js";
 
+const getAll = async (req, res, next) => {
+  try {
+    const materialBanks = await prisma.materialBank.findMany();
+
+    return apiSuccess(res, "Berhasil mendapatkan data!", materialBanks);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const index = async (req, res, next) => {
   try {
     const materialBanks = await materialBankService.getMaterialBanks();
@@ -132,4 +142,5 @@ export default {
   create,
   update,
   destroy,
+  getAll,
 };

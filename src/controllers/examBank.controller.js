@@ -4,6 +4,16 @@ import apiSuccess from "../utils/apiSuccess.js";
 import uploadToBucket from "../utils/uploadToBucket.js";
 import prisma from "../lib/prisma.js";
 
+const getAll = async (req, res, next) => {
+  try {
+    const examBanks = await prisma.examBank.findMany();
+
+    return apiSuccess(res, "Berhasil mendapatkan data!", examBanks);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const index = async (req, res, next) => {
   try {
     const examBanks = await examBankService.getExamBanks();
@@ -123,4 +133,5 @@ export default {
   create,
   update,
   destroy,
+  getAll,
 };
