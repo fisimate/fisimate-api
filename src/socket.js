@@ -18,11 +18,17 @@ const setupSocket = (server) => {
 
         const result = await geminiResponse.response;
 
+        // clear the response
+        if (result.startsWith("```json") && result.endsWith("```")) {
+          result = result.slice(7, -3).trim();
+        }
+
         // convert to json
+        const jsonResponse = JSON.parse(result.text());
 
         // make logic to create question and option
 
-        socket.emit("response", result.text());
+        socket.emit("response", jsonResponse);
       } catch (error) {
         socket.emit("error", `Internal server Error ${error}`);
       }
