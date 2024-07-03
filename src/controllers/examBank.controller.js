@@ -30,13 +30,13 @@ const create = async (req, res, next) => {
 
     const files = req.files;
 
-    if (!files.icon && !files.fileBank) {
+    if (!files.icon && !files.filePath) {
       throw new BadRequestError("File harus ada!");
     }
 
     const iconUrl = await uploadToBucket(files.icon[0], "exam-banks/icons");
     const fileBankUrl = await uploadToBucket(
-      files.fileBank[0],
+      files.filePath[0],
       "exam-banks/files"
     );
 
@@ -62,7 +62,7 @@ const update = async (req, res, next) => {
 
     const files = req.files;
 
-    if (!files.icon && !files.fileBank) {
+    if (!files.icon && !files.filePath) {
       throw new BadRequestError("File harus ada!");
     }
 
@@ -76,9 +76,9 @@ const update = async (req, res, next) => {
       updatedData.icon = iconUrl;
     }
 
-    if (files.fileBank) {
+    if (files.filePath) {
       const fileBankUrl = await uploadToBucket(
-        files.icon[0],
+        files.filePath[0],
         "exam-banks/files"
       );
       updatedData.filePath = fileBankUrl;

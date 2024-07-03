@@ -10,13 +10,13 @@ router.get("/:id", authenticateUser, materialBankController.show);
 router.post(
   "/",
   authenticateUser,
-  upload.fields([{ name: "icon" }, { name: "fileBankPath" }]),
+  upload.fields([{ name: "icon" }, { name: "filePath" }]),
   materialBankController.create
 );
 router.put(
   "/:id",
   authenticateUser,
-  upload.fields([{ name: "icon" }, { name: "fileBankPath" }]),
+  upload.fields([{ name: "icon" }, { name: "filePath" }]),
   materialBankController.update
 );
 router.delete("/:id", authenticateUser, materialBankController.destroy);
