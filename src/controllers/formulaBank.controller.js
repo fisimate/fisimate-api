@@ -82,10 +82,6 @@ const update = async (req, res, next) => {
 
     const files = req.files;
 
-    if (!files.icon && !files.filePath) {
-      throw new BadRequestError("File harus ada!");
-    }
-
     const updatedData = {
       title,
       chapterId,

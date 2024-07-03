@@ -8,8 +8,8 @@ const getAll = async (req, res, next) => {
   try {
     const examBanks = await prisma.examBank.findMany({
       include: {
-        chapter: true
-      }
+        chapter: true,
+      },
     });
 
     return apiSuccess(res, "Berhasil mendapatkan data!", examBanks);
@@ -75,10 +75,6 @@ const update = async (req, res, next) => {
     const { title, chapterId } = req.body;
 
     const files = req.files;
-
-    if (!files.icon && !files.filePath) {
-      throw new BadRequestError("File harus ada!");
-    }
 
     const updatedData = {
       title,
