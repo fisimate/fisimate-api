@@ -7,15 +7,15 @@ import upload from "../lib/multer.js";
 
 const router = express.Router();
 
-router.get("/:id", authenticateUser, quizController.getQuizById);
+router.get("/:simulationId", authenticateUser, quizController.getQuizById);
 router.post("/", authenticateUser, quizController.create);
 router.put("/:id", authenticateUser, quizController.update);
-router.delete("/:id", authenticateUser, quizController.destroy);
+router.delete("/:id", authenticateUser, quizController.deleteQuizById);
 
-// attempt quiz
+// attempt simulation
 router.post("/attempt", authenticateUser, quizAttemptController.createAttempt);
 router.get(
-  "/result/:quizId",
+  "/result/:simulationId",
   authenticateUser,
   quizAttemptController.getUserScore
 );
@@ -25,27 +25,31 @@ router.get(
   quizAttemptController.getAllAttempts
 );
 router.get(
-  "/attempt/:quizId",
+  "/attempt/:simulationId",
   authenticateUser,
-  quizAttemptController.getAttemptByQuizId
+  quizAttemptController.getAttemptBySimulationId
 );
 
-// quiz review
-router.get("/:quizId/review", authenticateUser, quizReviewController.index);
+// simulation review
+router.get(
+  "/:simulationId/review",
+  authenticateUser,
+  quizReviewController.index
+);
 router.post(
-  "/:quizId/review",
+  "/:simulationId/review",
   authenticateUser,
   upload.single("filePath"),
   quizReviewController.create
 );
 router.put(
-  "/:quizId/review",
+  "/:simulationId/review",
   authenticateUser,
   upload.single("filePath"),
   quizReviewController.update
 );
 router.delete(
-  "/:quizId/review",
+  "/:simulationId/review",
   authenticateUser,
   quizReviewController.destroy
 );

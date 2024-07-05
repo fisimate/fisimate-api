@@ -3,18 +3,18 @@ import prisma from "../lib/prisma.js";
 import apiSuccess from "../utils/apiSuccess.js";
 import uploadToBucket from "../utils/uploadToBucket.js";
 
-// Get review by quizId
+// Get review by simulationId
 const index = async (req, res, next) => {
   try {
-    const { quizId } = req.params;
+    const { simulationId } = req.params;
 
-    const quizReview = await prisma.quizReview.findFirstOrThrow({
+    const simulationReview = await prisma.simulationReview.findFirstOrThrow({
       where: {
-        quizId,
+        simulationId,
       },
     });
 
-    return apiSuccess(res, "Berhasil mendapatkan data!", quizReview);
+    return apiSuccess(res, "Berhasil mendapatkan data!", simulationReview);
   } catch (error) {
     next(error);
   }
@@ -22,12 +22,12 @@ const index = async (req, res, next) => {
 
 const create = async (req, res, next) => {
   try {
-    const { quizId } = req.params;
+    const { simulationId } = req.params;
     const file = req.file;
 
-    await prisma.quiz.findFirstOrThrow({
+    await prisma.simulation.findFirstOrThrow({
       where: {
-        id: quizId,
+        id: simulationId,
       },
     });
 
@@ -35,16 +35,16 @@ const create = async (req, res, next) => {
       throw new BadRequestError("File harus ada!");
     }
 
-    const fileUrl = await uploadToBucket(file, "quiz-reviews");
+    const fileUrl = await uploadToBucket(file, "simulation-reviews");
 
-    const quizReview = await prisma.quizReview.create({
+    const simulationReview = await prisma.simulationReview.create({
       data: {
-        quizId,
+        simulationId,
         filePath: fileUrl,
       },
     });
 
-    return apiSuccess(res, "Berhasil membuat data!", quizReview);
+    return apiSuccess(res, "Berhasil membuat data!", simulationReview);
   } catch (error) {
     next(error);
   }
@@ -52,13 +52,12 @@ const create = async (req, res, next) => {
 
 const update = async (req, res, next) => {
   try {
-    const { quizId } = req.params;
-
+    const { simulationId } = req.params;
     const file = req.file;
 
-    await prisma.quiz.findFirstOrThrow({
+    await prisma.simulation.findFirstOrThrow({
       where: {
-        id: quizId,
+        id: simulationId,
       },
     });
 
@@ -66,18 +65,18 @@ const update = async (req, res, next) => {
       throw new BadRequestError("File harus ada!");
     }
 
-    const fileUrl = await uploadToBucket(file, "quiz-reviews");
+    const fileUrl = await uploadToBucket(file, "simulation-reviews");
 
-    const quizReview = await prisma.quizReview.update({
+    const simulationReview = await prisma.simulationReview.update({
       data: {
         filePath: fileUrl,
       },
       where: {
-        quizId,
+        simulationId,
       },
     });
 
-    return apiSuccess(res, "Berhasil update data!", quizReview);
+    return apiSuccess(res, "Berhasil update data!", simulationReview);
   } catch (error) {
     next(error);
   }
@@ -85,17 +84,17 @@ const update = async (req, res, next) => {
 
 const destroy = async (req, res, next) => {
   try {
-    const { quizId } = req.params;
+    const { simulationId } = req.params;
 
-    await prisma.quizReview.findFirstOrThrow({
+    await prisma.simulationReview.findFirstOrThrow({
       where: {
-        quizId,
+        simulationId,
       },
     });
 
-    await prisma.quizReview.delete({
+    await prisma.simulationReview.delete({
       where: {
-        quizid,
+        simulationId,
       },
     });
 

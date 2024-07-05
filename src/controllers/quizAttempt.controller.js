@@ -11,7 +11,7 @@ const getAllAttempts = async (req, res, next) => {
         userId,
       },
       include: {
-        quiz: true,
+        simulation: true,
         userQuizResponse: true,
       },
     });
@@ -22,22 +22,22 @@ const getAllAttempts = async (req, res, next) => {
   }
 };
 
-const getAttemptByQuizId = async (req, res, next) => {
+const getAttemptBySimulationId = async (req, res, next) => {
   try {
     const { id: userId } = req.user;
-    const { quizId } = req.params;
+    const { simulationId } = req.params;
 
     const attempt = await prisma.quizAttempt.findFirstOrThrow({
       where: {
-        quizId,
+        simulationId,
         AND: {
           userId,
         },
       },
       include: {
-        quiz: {
+        simulation: {
           include: {
-            questions: {
+            question: {
               include: {
                 quizOptions: true,
               },
@@ -58,17 +58,17 @@ const getAttemptByQuizId = async (req, res, next) => {
 const createAttempt = async (req, res, next) => {
   try {
     const { id: userId } = req.user;
-    const { quizId, responses } = req.body;
+    const { simulationId, responses } = req.body;
 
-    // Validate quizId
-    const quiz = await prisma.quiz.findFirstOrThrow({
-      where: { id: quizId },
+    // Validate simulationId
+    const simulation = await prisma.simulation.findFirstOrThrow({
+      where: { id: simulationId },
     });
 
-    // Check if the user has already attempted this quiz
+    // Check if the user has already attempted this simulation
     const existingAttempt = await prisma.quizAttempt.findFirst({
       where: {
-        quizId,
+        simulationId,
         userId,
       },
     });
@@ -76,7 +76,7 @@ const createAttempt = async (req, res, next) => {
     if (existingAttempt) {
       return res.status(400).json({
         success: false,
-        message: "User has already attempted this quiz.",
+        message: "User has already attempted this simulation.",
       });
     }
 
@@ -101,7 +101,7 @@ const createAttempt = async (req, res, next) => {
         where: { id: response.questionId },
       });
 
-      if (!question || question.quizId !== quizId) {
+      if (!question || question.simulationId !== simulationId) {
         return res.status(400).json({
           success: false,
           message: `Invalid answer.`,
@@ -126,7 +126,7 @@ const createAttempt = async (req, res, next) => {
         // Step 1: Create a new quiz attempt
         const quizAttempt = await prisma.quizAttempt.create({
           data: {
-            quizId,
+            simulationId,
             userId,
             score: 0, // Initial score is 0, will be updated after evaluating responses
             attemptAt: new Date(),
@@ -157,7 +157,7 @@ const createAttempt = async (req, res, next) => {
           },
         });
 
-        // Assuming each quiz has exactly 4 questions
+        // Assuming each simulation has exactly 4 questions
         const totalQuestions = 4;
         const correctCount = correctResponses.length;
 
@@ -173,7 +173,7 @@ const createAttempt = async (req, res, next) => {
         return { savedResponses, score };
       })
       .then((result) => {
-        return apiSuccess(res, "Berhasil menjawab kuis!", {
+        return apiSuccess(res, "Berhasil menjawab simulasi!", {
           savedResponses: result.savedResponses,
           score: result.score,
         });
@@ -189,12 +189,12 @@ const createAttempt = async (req, res, next) => {
 const getUserScore = async (req, res, next) => {
   try {
     const { id: userId } = req.user;
-    const { quizId } = req.params;
+    const { simulationId } = req.params;
 
     // Fetch the quiz attempt
     const quizAttempt = await prisma.quizAttempt.findFirst({
       where: {
-        quizId,
+        simulationId,
         userId,
       },
       include: {
@@ -251,7 +251,7 @@ const getUserScore = async (req, res, next) => {
 
 export default {
   getAllAttempts,
-  getAttemptByQuizId,
+  getAttemptBySimulationId,
   createAttempt,
   getUserScore,
 };

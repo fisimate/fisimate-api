@@ -6,12 +6,12 @@ const getQuizBySimulation = async (req, res, next) => {
   try {
     const { simulationId } = req.params;
 
-    const quiz = await prisma.quiz.findFirstOrThrow({
+    const simulation = await prisma.simulation.findFirstOrThrow({
       where: {
-        simulationId,
+        id: simulationId,
       },
       include: {
-        questions: {
+        question: {
           include: {
             quizOptions: true,
           },
@@ -19,31 +19,7 @@ const getQuizBySimulation = async (req, res, next) => {
       },
     });
 
-    return apiSuccess(res, "Berhasil mendapatkan kuis!", quiz);
-  } catch (error) {
-    next(error);
-  }
-};
-
-// get quiz by id
-const getQuizById = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-
-    const quiz = await prisma.quiz.findFirstOrThrow({
-      where: {
-        id,
-      },
-      include: {
-        questions: {
-          include: {
-            quizOptions: true,
-          },
-        },
-      },
-    });
-
-    return apiSuccess(res, "Berhasil mendapatkan kuis!", quiz);
+    return apiSuccess(res, "Berhasil mendapatkan simulasi!", simulation);
   } catch (error) {
     next(error);
   }
@@ -52,12 +28,12 @@ const getQuizById = async (req, res, next) => {
 // create new quiz
 const create = async (req, res, next) => {
   try {
-    const { simulationId, questions } = req.body;
+    const { chapterId, questions } = req.body;
 
-    const quiz = await prisma.quiz.create({
+    const simulation = await prisma.simulation.create({
       data: {
-        simulationId,
-        questions: {
+        chapterId,
+        question: {
           create: questions.map((question) => ({
             text: question.text,
             quizOptions: {
@@ -71,7 +47,7 @@ const create = async (req, res, next) => {
       },
     });
 
-    return apiSuccess(res, "Berhasil membuat kuis!", quiz);
+    return apiSuccess(res, "Berhasil membuat simulasi!", simulation);
   } catch (error) {
     next(error);
   }
@@ -81,7 +57,7 @@ const create = async (req, res, next) => {
 const update = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { simulationId, questions } = req.body;
+    const { chapterId, questions } = req.body;
 
     const updatePromises = questions.map(async (question) => {
       if (question.id) {
@@ -105,26 +81,24 @@ const update = async (req, res, next) => {
               },
             });
           } else {
-            // If no option ID, create a new option
+            // Otherwise, create a new option for the existing question
             return prisma.quizOption.create({
               data: {
+                questionId: updatedQuestion.id,
                 text: option.text,
                 isCorrect: option.isCorrect,
-                questionId: question.id,
               },
             });
           }
         });
 
         await Promise.all(optionPromises);
-
-        return updatedQuestion;
       } else {
-        // If no question ID, create a new question and options
-        return prisma.question.create({
+        // Otherwise, create a new question with options
+        await prisma.question.create({
           data: {
+            simulationId: id,
             text: question.text,
-            quizId: id,
             quizOptions: {
               create: question.quizOptions.map((option) => ({
                 text: option.text,
@@ -138,14 +112,11 @@ const update = async (req, res, next) => {
 
     await Promise.all(updatePromises);
 
-    // Update the quiz itself
-    const quiz = await prisma.quiz.update({
+    const updatedSimulation = await prisma.simulation.update({
       where: { id },
-      data: {
-        simulationId,
-      },
+      data: { chapterId },
       include: {
-        questions: {
+        question: {
           include: {
             quizOptions: true,
           },
@@ -153,24 +124,24 @@ const update = async (req, res, next) => {
       },
     });
 
-    return apiSuccess(res, "Berhasil update kuis!", quiz);
+    return apiSuccess(res, "Berhasil memperbarui simulasi!", updatedSimulation);
   } catch (error) {
     next(error);
   }
 };
 
-// Delete quiz
-const destroy = async (req, res, next) => {
+// delete quiz by id
+const deleteQuizById = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    await prisma.quiz.delete({
+    await prisma.simulation.delete({
       where: {
         id,
       },
     });
 
-    return apiSuccess(res, "Berhasil menghapus data!");
+    return apiSuccess(res, "Berhasil menghapus simulasi!");
   } catch (error) {
     next(error);
   }
@@ -181,5 +152,5 @@ export default {
   getQuizById,
   create,
   update,
-  destroy,
+  deleteQuizById,
 };
