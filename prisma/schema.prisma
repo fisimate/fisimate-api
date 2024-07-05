@@ -94,15 +94,17 @@ model FormulaBank {
 }
 
 model Simulation {
-  id        String     @id @default(uuid())
-  title     String
-  icon      String     @db.Text
-  chapterId String     @map("chapter_id")
-  chapter   Chapter    @relation(fields: [chapterId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt DateTime   @default(now()) @map("created_at")
-  updatedAt DateTime   @default(now()) @map("updated_at")
-  materials Material[]
-  quizzes   Quiz[]
+  id          String        @id @default(uuid())
+  title       String
+  icon        String        @db.Text
+  chapterId   String        @map("chapter_id")
+  chapter     Chapter       @relation(fields: [chapterId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @default(now()) @map("updated_at")
+  materials   Material[]
+  question    Question[]
+  quizReview  QuizReview[]
+  quizAttempt QuizAttempt[]
 
   @@index([chapterId])
 }
@@ -118,30 +120,18 @@ model Material {
   @@index([simulationId])
 }
 
-model Quiz {
-  id           String        @id @default(uuid())
-  simulationId String        @map("simulation_id")
-  simulation   Simulation    @relation(fields: [simulationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt    DateTime      @default(now()) @map("created_at")
-  updatedAt    DateTime      @default(now()) @map("updated_at")
-  quizReviews  QuizReview[]
-  questions    Question[]
-  quizAttempt  QuizAttempt[]
-
-  @@index([simulationId])
-}
-
 model Question {
   id               String             @id @default(uuid())
   text             String
-  quizId           String             @map("quiz_id")
-  quiz             Quiz               @relation(fields: [quizId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  imageUrl         String?
+  simulationId     String             @map("simulation_id")
+  simulation       Simulation         @relation(fields: [simulationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   createdAt        DateTime           @default(now()) @map("created_at")
   updatedAt        DateTime           @default(now()) @map("updated_at")
   quizOptions      QuizOption[]
   userQuizResponse UserQuizResponse[]
 
-  @@index([quizId])
+  @@index([simulationId])
 }
 
 model QuizOption {
@@ -158,14 +148,14 @@ model QuizOption {
 }
 
 model QuizReview {
-  id        String   @id @default(uuid())
-  filePath  String   @map("file_path") @db.Text
-  quizId    String   @map("quiz_id")
-  quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
+  id           String     @id @default(uuid())
+  filePath     String     @map("file_path") @db.Text
+  simulationId String     @map("simulation_id")
+  simulation   Simulation @relation(fields: [simulationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @default(now()) @map("updated_at")
 
-  @@index([quizId])
+  @@index([simulationId])
 }
 
 model UserQuizResponse {
@@ -180,11 +170,11 @@ model UserQuizResponse {
 
 model QuizAttempt {
   id               String             @id @default(uuid())
-  quizId           String             @map("quiz_id")
+  simulationId     String             @map("simulation_id")
   userId           String             @map("user_id")
   score            Float
   attemptAt        DateTime           @map("attempt_at")
-  quiz             Quiz               @relation(fields: [quizId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  simulation       Simulation         @relation(fields: [simulationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   user             User               @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userQuizResponse UserQuizResponse[]
 }
