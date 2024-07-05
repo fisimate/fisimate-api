@@ -28,26 +28,32 @@ const getQuizBySimulation = async (req, res, next) => {
 // create new quiz
 const create = async (req, res, next) => {
   try {
+    const { simulationId } = req.params;
     const { chapterId, questions } = req.body;
 
-    const simulation = await prisma.simulation.create({
-      data: {
-        chapterId,
-        question: {
-          create: questions.map((question) => ({
-            text: question.text,
-            quizOptions: {
-              create: question.quizOptions.map((option) => ({
-                text: option.text,
-                isCorrect: option.isCorrect,
-              })),
-            },
-          })),
-        },
+    // Find the existing simulation to ensure it exists
+    const simulation = await prisma.simulation.findFirstOrThrow({
+      where: {
+        id: simulationId,
       },
     });
 
-    return apiSuccess(res, "Berhasil membuat simulasi!", simulation);
+    // Create questions related to the found simulation
+    const createdQuestions = await prisma.question.createMany({
+      data: questions.map((question) => ({
+        text: question.text,
+        chapterId, // assuming chapterId needs to be associated with questions
+        simulationId: simulation.id,
+        quizOptions: {
+          create: question.quizOptions.map((option) => ({
+            text: option.text,
+            isCorrect: option.isCorrect,
+          })),
+        },
+      })),
+    });
+
+    return apiSuccess(res, "Berhasil membuat pertanyaan!", createdQuestions);
   } catch (error) {
     next(error);
   }
