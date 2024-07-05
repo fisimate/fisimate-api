@@ -56,7 +56,7 @@ const create = async (req, res, next) => {
 // Update quiz
 const update = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { simulationId } = req.params;
     const { chapterId, questions } = req.body;
 
     const updatePromises = questions.map(async (question) => {
@@ -97,7 +97,7 @@ const update = async (req, res, next) => {
         // Otherwise, create a new question with options
         await prisma.question.create({
           data: {
-            simulationId: id,
+            simulationId: simulationId,
             text: question.text,
             quizOptions: {
               create: question.quizOptions.map((option) => ({
@@ -113,7 +113,7 @@ const update = async (req, res, next) => {
     await Promise.all(updatePromises);
 
     const updatedSimulation = await prisma.simulation.update({
-      where: { id },
+      where: { id: simulationId },
       data: { chapterId },
       include: {
         question: {
@@ -133,11 +133,11 @@ const update = async (req, res, next) => {
 // delete quiz by id
 const deleteQuizById = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { simulationId } = req.params;
 
     await prisma.simulation.delete({
       where: {
-        id,
+        id: simulationId,
       },
     });
 
@@ -149,7 +149,6 @@ const deleteQuizById = async (req, res, next) => {
 
 export default {
   getQuizBySimulation,
-  getQuizById,
   create,
   update,
   deleteQuizById,

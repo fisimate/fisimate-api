@@ -7,10 +7,18 @@ import upload from "../lib/multer.js";
 
 const router = express.Router();
 
-router.get("/:simulationId", authenticateUser, quizController.getQuizById);
+router.get(
+  "/:simulationId",
+  authenticateUser,
+  quizController.getQuizBySimulation
+);
 router.post("/", authenticateUser, quizController.create);
-router.put("/:id", authenticateUser, quizController.update);
-router.delete("/:id", authenticateUser, quizController.deleteQuizById);
+router.put("/:simulationId", authenticateUser, quizController.update);
+router.delete(
+  "/:simulationId",
+  authenticateUser,
+  quizController.deleteQuizById
+);
 
 // attempt simulation
 router.post("/attempt", authenticateUser, quizAttemptController.createAttempt);
