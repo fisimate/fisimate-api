@@ -35,7 +35,7 @@ const update = async (req, res, next) => {
     };
 
     if (req.file) {
-      const iconUrl = await uploadToBucket(file, "simulations/icons");
+      const iconUrl = await uploadToBucket(req.file, "simulations/icons");
       updatedData.iconUrl = iconUrl;
     }
 
