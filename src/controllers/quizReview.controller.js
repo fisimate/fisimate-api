@@ -8,7 +8,7 @@ const index = async (req, res, next) => {
   try {
     const { simulationId } = req.params;
 
-    const simulationReview = await prisma.simulationReview.findFirstOrThrow({
+    const simulationReview = await prisma.quizReview.findFirstOrThrow({
       where: {
         simulationId,
       },
@@ -37,7 +37,7 @@ const create = async (req, res, next) => {
 
     const fileUrl = await uploadToBucket(file, "simulation-reviews");
 
-    const simulationReview = await prisma.simulationReview.create({
+    const simulationReview = await prisma.quizReview.create({
       data: {
         simulationId,
         filePath: fileUrl,
@@ -67,7 +67,7 @@ const update = async (req, res, next) => {
 
     const fileUrl = await uploadToBucket(file, "simulation-reviews");
 
-    const simulationReview = await prisma.simulationReview.update({
+    const simulationReview = await prisma.quizReview.update({
       data: {
         filePath: fileUrl,
       },
@@ -86,13 +86,13 @@ const destroy = async (req, res, next) => {
   try {
     const { simulationId } = req.params;
 
-    await prisma.simulationReview.findFirstOrThrow({
+    await prisma.quizReview.findFirstOrThrow({
       where: {
         simulationId,
       },
     });
 
-    await prisma.simulationReview.delete({
+    await prisma.quizReview.delete({
       where: {
         simulationId,
       },
