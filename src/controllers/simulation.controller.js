@@ -31,7 +31,11 @@ const update = async (req, res, next) => {
 
     const updatedData = {
       title,
-      chapterId,
+      chapter: {
+        connect: {
+          id: chapterId,
+        },
+      },
     };
 
     if (req.file) {
