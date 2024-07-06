@@ -29,23 +29,21 @@ const update = async (req, res, next) => {
     const { id } = req.params;
     const { title, chapterId } = req.body;
 
-    const file = req.file;
+    const updatedData = {
+      title,
+      chapterId,
+    };
 
-    if (!file) {
-      throw new BadRequestError("File belum diupload!");
+    if (file) {
+      const iconUrl = await uploadToBucket(file, "simulations/icons");
+      updatedData.iconUrl = iconUrl;
     }
-
-    const iconUrl = await uploadToBucket(file, "simulations/icons");
 
     const simulation = await prisma.simulation.update({
       where: {
         id,
       },
-      data: {
-        title,
-        chapterId,
-        icon: iconUrl,
-      },
+      data: updatedData,
     });
 
     return apiSuccess(res, "Berhasil update data!", simulation);
