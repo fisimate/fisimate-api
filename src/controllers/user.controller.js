@@ -1,3 +1,4 @@
+import prisma from "../lib/prisma.js";
 import { userService } from "../services/index.js";
 import apiSuccess from "../utils/apiSuccess.js";
 
@@ -41,9 +42,27 @@ const updateProfilePicture = async (req, res, next) => {
   }
 };
 
+const getAllStudents = async (req, res, next) => {
+  try {
+    const students = await prisma.role.findMany({
+      where: {
+        name: "user",
+      },
+      include: {
+        users: true,
+      },
+    });
+
+    return apiSuccess(res, "Berhasil mendapatkan data siswa!", students);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   changePassword,
   updateProfile,
   getProfile,
   updateProfilePicture,
+  getAllStudents,
 };

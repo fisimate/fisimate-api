@@ -28,4 +28,7 @@ router.post(
   userController.changePassword
 );
 
+// route get siswa
+router.get("/students", authenticateUser, userController.getAllStudents);
+
 export default router;
