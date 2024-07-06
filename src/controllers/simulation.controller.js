@@ -40,7 +40,7 @@ const update = async (req, res, next) => {
 
     if (req.file) {
       const iconUrl = await uploadToBucket(req.file, "simulations/icons");
-      updatedData.iconUrl = iconUrl;
+      updatedData.icon = iconUrl;
     }
 
     const simulation = await prisma.simulation.update({
