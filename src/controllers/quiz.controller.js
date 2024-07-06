@@ -139,9 +139,8 @@ const update = async (req, res, next) => {
 
     await Promise.all(updatePromises);
 
-    const updatedSimulation = await prisma.simulation.update({
+    const updatedSimulation = await prisma.simulation.findFirstOrThrow({
       where: { id: simulationId },
-      data: { chapterId },
       include: {
         question: {
           include: {
