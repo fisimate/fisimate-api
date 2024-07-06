@@ -37,26 +37,23 @@ const setupSocket = (server) => {
 
     socket.on("save", async (message) => {
       try {
-        const { quizId, questions } = message;
+        const { simulationId, questions, options } = message;
 
-        for (const questionData of questions) {
-          const question = await prisma.question.create({
-            data: {
-              quizId,
-              text: questionData.questions,
+        const createdQuestion = await prisma.question.create({
+          data: {
+            simulationId,
+            text: questions,
+            quizOptions: {
+              create: options.map((option) => ({
+                text: option.option,
+                isCorrect: option.correct,
+              })),
             },
-          });
-
-          for (const optionData of questionData.options) {
-            await prisma.quizOption.create({
-              data: {
-                questionId: question.id,
-                text: optionData.option,
-                isCorrect: optionData.correct,
-              },
-            });
-          }
-        }
+          },
+          include: {
+            quizOptions: true,
+          },
+        });
 
         socket.emit("saveSuccess", "Question saved successfully!");
       } catch (error) {
