@@ -12,8 +12,18 @@ router.get(
   authenticateUser,
   quizController.getQuizBySimulation
 );
-router.post("/", authenticateUser, quizController.create);
-router.put("/:simulationId", authenticateUser, quizController.update);
+router.post(
+  "/",
+  authenticateUser,
+  upload.single("image"),
+  quizController.create
+);
+router.put(
+  "/:simulationId",
+  authenticateUser,
+  upload.fields([{ name: "image", maxCount: 1 }]),
+  quizController.update
+);
 router.delete(
   "/:simulationId",
   authenticateUser,

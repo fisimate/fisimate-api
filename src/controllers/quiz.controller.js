@@ -29,7 +29,7 @@ const getQuizBySimulation = async (req, res, next) => {
 const create = async (req, res, next) => {
   try {
     const { simulationId } = req.params;
-    const { chapterId, questions } = req.body;
+    const { text, options } = req.body;
 
     // Find the existing simulation to ensure it exists
     const simulation = await prisma.simulation.findFirstOrThrow({
@@ -38,22 +38,32 @@ const create = async (req, res, next) => {
       },
     });
 
-    // Create questions related to the found simulation
-    const createdQuestions = await prisma.question.createMany({
-      data: questions.map((question) => ({
-        text: question.text,
-        chapterId, // assuming chapterId needs to be associated with questions
+    let imageUrl = null;
+
+    // Check if an image is provided
+    if (req.file) {
+      imageUrl = await uploadToBucket(req.file, "quiz-images");
+    }
+
+    // Create the question
+    const createdQuestion = await prisma.question.create({
+      data: {
+        text,
+        imageUrl,
         simulationId: simulation.id,
         quizOptions: {
-          create: question.quizOptions.map((option) => ({
+          create: options.map((option) => ({
             text: option.text,
             isCorrect: option.isCorrect,
           })),
         },
-      })),
+      },
+      include: {
+        quizOptions: true, // Include the related quizOptions in the response
+      },
     });
 
-    return apiSuccess(res, "Berhasil membuat pertanyaan!", createdQuestions);
+    return apiSuccess(res, "Berhasil membuat pertanyaan!", createdQuestion);
   } catch (error) {
     next(error);
   }
@@ -63,20 +73,30 @@ const create = async (req, res, next) => {
 const update = async (req, res, next) => {
   try {
     const { simulationId } = req.params;
-    const { chapterId, questions } = req.body;
+    const { questions } = req.body;
 
     const updatePromises = questions.map(async (question) => {
+      let imageUrl = null;
+
+      if (question.image && req.files && req.files[question.image]) {
+        imageUrl = await uploadToBucket(
+          req.files[question.image],
+          "quiz-images"
+        );
+      }
+
       if (question.id) {
         // If question ID is provided, update the existing question
         const updatedQuestion = await prisma.question.update({
           where: { id: question.id },
           data: {
             text: question.text,
+            imageUrl: imageUrl || question.imageUrl, // Update image URL if new image is provided
           },
         });
 
         // Update or create quiz options
-        const optionPromises = question.quizOptions.map(async (option) => {
+        const optionPromises = question.options.map(async (option) => {
           if (option.id) {
             // If option ID is provided, update the existing option
             return prisma.quizOption.update({
@@ -105,8 +125,9 @@ const update = async (req, res, next) => {
           data: {
             simulationId: simulationId,
             text: question.text,
+            imageUrl,
             quizOptions: {
-              create: question.quizOptions.map((option) => ({
+              create: question.options.map((option) => ({
                 text: option.text,
                 isCorrect: option.isCorrect,
               })),
