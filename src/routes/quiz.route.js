@@ -13,7 +13,7 @@ router.get(
   quizController.getQuizBySimulation
 );
 router.post(
-  "/",
+  "/:simulationId",
   authenticateUser,
   upload.single("image"),
   quizController.create
