@@ -21,6 +21,26 @@ const getAllAttempts = async (req, res, next) => {
     next(error);
   }
 };
+// history berdasarkan user id di params
+const getAttemptHistories = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+
+    const attempts = await prisma.quizAttempt.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        simulation: true,
+        userQuizResponse: true,
+      },
+    });
+
+    return apiSuccess(res, "Berhasil mendapatkan data!", attempts);
+  } catch (error) {
+    next(error);
+  }
+};
 
 const getAttemptBySimulationId = async (req, res, next) => {
   try {
@@ -254,4 +274,5 @@ export default {
   getAttemptBySimulationId,
   createAttempt,
   getUserScore,
+  getAttemptHistories,
 };

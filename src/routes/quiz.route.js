@@ -47,6 +47,12 @@ router.get(
   authenticateUser,
   quizAttemptController.getAttemptBySimulationId
 );
+// get attempt history
+router.get(
+  "/attempt/history/:userId",
+  authenticateUser,
+  quizAttemptController.getAttemptHistories
+);
 
 // simulation review
 router.get(
