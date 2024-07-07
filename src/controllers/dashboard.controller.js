@@ -17,7 +17,7 @@ const index = async (req, res, next) => {
 
 const leaderboard = async (req, res, next) => {
   try {
-    const result = await dashboardService.getLeaderboard();
+    const result = await dashboardService.getLeaderboard(req);
 
     return apiSuccess(res, "Berhasil mendapatkan data leaderboard", result);
   } catch (error) {
