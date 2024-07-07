@@ -81,7 +81,11 @@ const dashboard = async () => {
   };
 };
 
-const getLeaderboard = async () => {
+const getLeaderboard = async (req) => {
+  const { take } = req.query;
+
+  const takeInt = take ? parseInt(take, 10) : undefined;
+
   const leaderboard = await prisma.quizAttempt.groupBy({
     by: ["userId"],
     _sum: {
@@ -92,7 +96,7 @@ const getLeaderboard = async () => {
         score: "desc",
       },
     },
-    take: 5,
+    take: takeInt,
   });
 
   // User data for leaderboard
@@ -105,6 +109,7 @@ const getLeaderboard = async () => {
           email: true,
           fullname: true,
           nis: true,
+          profilePicture: true,
           role: {
             select: {
               name: true,
