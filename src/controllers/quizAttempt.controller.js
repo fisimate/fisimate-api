@@ -78,7 +78,8 @@ const getAttemptBySimulationId = async (req, res, next) => {
 const createAttempt = async (req, res, next) => {
   try {
     const { id: userId } = req.user;
-    const { simulationId, responses } = req.body;
+    const { responses } = req.body;
+    const { simulationId } = req.params;
 
     // Validate simulationId
     const simulation = await prisma.simulation.findFirstOrThrow({

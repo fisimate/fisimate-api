@@ -31,7 +31,11 @@ router.delete(
 );
 
 // attempt simulation
-router.post("/attempt", authenticateUser, quizAttemptController.createAttempt);
+router.post(
+  "/:simulationId/attempt",
+  authenticateUser,
+  quizAttemptController.createAttempt
+);
 router.get(
   "/result/:simulationId",
   authenticateUser,
@@ -43,7 +47,7 @@ router.get(
   quizAttemptController.getAllAttempts
 );
 router.get(
-  "/attempt/:simulationId",
+  "/:simulationId/attempt",
   authenticateUser,
   quizAttemptController.getAttemptBySimulationId
 );
