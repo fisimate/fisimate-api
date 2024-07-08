@@ -5,6 +5,9 @@ const getMaterial = async (simulationId) => {
     where: {
       simulationId,
     },
+    include: {
+      simulation: true,
+    },
   });
 };
 
