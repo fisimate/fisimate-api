@@ -1,3 +1,4 @@
+import prisma from "../lib/prisma.js";
 import { dashboardService } from "../services/index.js";
 import apiSuccess from "../utils/apiSuccess.js";
 
@@ -25,7 +26,24 @@ const leaderboard = async (req, res, next) => {
   }
 };
 
+const mobileDashboard = async (req, res, next) => {
+  try {
+    const result = await prisma.chapter.findMany({
+      include: {
+        examBanks: true,
+        materialBanks: true,
+        formulaBanks: true,
+      },
+    });
+
+    return apiSuccess(res, "Berhasil mendapatkan data", result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   index,
   leaderboard,
+  mobileDashboard,
 };
