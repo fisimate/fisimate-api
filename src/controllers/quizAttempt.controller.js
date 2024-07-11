@@ -144,15 +144,35 @@ const createAttempt = async (req, res, next) => {
     // Start a transaction
     await prisma
       .$transaction(async (prisma) => {
-        // Step 1: Create a new quiz attempt
-        const quizAttempt = await prisma.quizAttempt.create({
-          data: {
-            simulationId,
-            userId,
-            score: 0, // Initial score is 0, will be updated after evaluating responses
-            attemptAt: new Date(),
-          },
-        });
+        let quizAttempt;
+        if (existingAttempt) {
+          // Delete existing response
+          await prisma.userQuizResponse.deleteMany({
+            where: { quizAttempt: existingAttempt.id },
+            data: {
+              attemptAt: new Date(),
+              score: 0,
+            },
+          });
+
+          // Step 2: Update the existing quiz attempt
+          quizAttempt = await prisma.quizAttempt.update({
+            where: { id: existingAttempt.id },
+            data: {
+              attemptAt: new Date(),
+              score: 0, // Reset score to 0, will be updated after evaluating responses
+            },
+          });
+        } else {
+          quizAttempt = await prisma.quizAttempt.create({
+            data: {
+              simulationId,
+              userId,
+              score: 0,
+              attemptAt: new Date(),
+            },
+          });
+        }
 
         const attemptId = quizAttempt.id;
 
