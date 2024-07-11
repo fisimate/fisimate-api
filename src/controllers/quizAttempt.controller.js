@@ -142,10 +142,6 @@ const createAttempt = async (req, res, next) => {
           // Delete existing response
           await prisma.userQuizResponse.deleteMany({
             where: { quizAttempt: existingAttempt.id },
-            data: {
-              attemptAt: new Date(),
-              score: 0,
-            },
           });
 
           // Step 2: Update the existing quiz attempt
