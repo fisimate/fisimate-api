@@ -94,13 +94,6 @@ const createAttempt = async (req, res, next) => {
       },
     });
 
-    if (existingAttempt) {
-      return res.status(400).json({
-        success: false,
-        message: "User has already attempted this simulation.",
-      });
-    }
-
     // Validate responses
     if (!Array.isArray(responses) || responses.length === 0) {
       return res.status(400).json({
