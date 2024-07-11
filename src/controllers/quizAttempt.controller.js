@@ -194,6 +194,9 @@ const createAttempt = async (req, res, next) => {
         // Step 4: Calculate the score out of 100
         const score = (correctCount / totalQuestions) * 100;
 
+        // tambah bulatkan soal (biar int)
+        // tambah response
+
         // Step 5: Update the score of the quiz attempt
         await prisma.quizAttempt.update({
           where: { id: attemptId },
@@ -255,18 +258,8 @@ const getUserScore = async (req, res, next) => {
     // Prepare the result data
     const result = {
       score: quizAttempt.score,
-      correctResponses: correctResponses.map((response) => ({
-        questionId: response.question.id,
-        questionText: response.question.text,
-        selectedOptionId: response.selectedOption.id,
-        selectedOptionText: response.selectedOption.text,
-      })),
-      incorrectResponses: incorrectResponses.map((response) => ({
-        questionId: response.question.id,
-        questionText: response.question.text,
-        selectedOptionId: response.selectedOption.id,
-        selectedOptionText: response.selectedOption.text,
-      })),
+      correctResponses: correctResponses.length,
+      incorrectResponses: incorrectResponses.length,
     };
 
     return res.json({
