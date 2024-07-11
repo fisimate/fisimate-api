@@ -187,28 +187,41 @@ const createAttempt = async (req, res, next) => {
           },
         });
 
+        const totalQuestions = await prisma.question.count({
+          where: {
+            simulationId,
+          },
+        });
+
         // Assuming each simulation has exactly 4 questions
-        const totalQuestions = 4;
         const correctCount = correctResponses.length;
 
         // Step 4: Calculate the score out of 100
         const score = (correctCount / totalQuestions) * 100;
 
-        // tambah bulatkan soal (biar int)
-        // tambah response
+        const finalScore = Math.round(score);
+
+        const notAnswered = totalQuestions - responses.length;
 
         // Step 5: Update the score of the quiz attempt
         await prisma.quizAttempt.update({
           where: { id: attemptId },
-          data: { score },
+          data: { score: finalScore },
         });
 
-        return { savedResponses, score };
+        return {
+          savedResponses,
+          finalScore,
+          notAnswered,
+          answered: responses.length,
+        };
       })
       .then((result) => {
         return apiSuccess(res, "Berhasil menjawab simulasi!", {
           savedResponses: result.savedResponses,
-          score: result.score,
+          score: result.finalScore,
+          notAnswered: result.notAnswered,
+          answered: result.answered,
         });
       })
       .catch((error) => {
