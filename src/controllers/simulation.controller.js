@@ -64,8 +64,7 @@ const createProgress = async (req, res, next) => {
 
     const existingProgress = await prisma.simulationProgress.findUnique({
       where: {
-        userId,
-        simulationId,
+        userId_simulationId: { userId, simulationId },
       },
     });
 
