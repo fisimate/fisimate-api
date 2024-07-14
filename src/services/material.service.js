@@ -8,6 +8,9 @@ const getMaterial = async (simulationId) => {
     include: {
       simulation: true,
     },
+    orderBy: {
+      updatedAt: "desc",
+    },
   });
 };
 

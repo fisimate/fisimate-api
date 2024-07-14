@@ -24,6 +24,9 @@ const getAllSimulations = async (req) => {
       chapter: true,
     },
     where: filterOptions,
+    orderBy: {
+      updatedAt: "desc",
+    },
   });
 
   if (simulations.length === 0) {

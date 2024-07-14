@@ -1,7 +1,11 @@
 import prisma from "../lib/prisma.js";
 
 const getAll = async () => {
-  return await prisma.quizOption.findMany();
+  return await prisma.quizOption.findMany({
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
 };
 
 const getOne = async (id) => {

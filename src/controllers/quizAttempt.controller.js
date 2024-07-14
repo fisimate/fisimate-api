@@ -14,6 +14,9 @@ const getAllAttempts = async (req, res, next) => {
         simulation: true,
         userQuizResponse: true,
       },
+      orderBy: {
+        attemptAt: "desc",
+      },
     });
 
     return apiSuccess(res, "Berhasil mendapatkan data!", attempts);
@@ -33,6 +36,9 @@ const getAttemptHistories = async (req, res, next) => {
       include: {
         simulation: true,
         userQuizResponse: true,
+      },
+      orderBy: {
+        attemptAt: "desc",
       },
     });
 

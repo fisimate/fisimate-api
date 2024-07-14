@@ -17,6 +17,9 @@ const getQuizBySimulation = async (req, res, next) => {
           },
         },
       },
+      orderBy: {
+        updatedAt: "desc",
+      },
     });
 
     return apiSuccess(res, "Berhasil mendapatkan simulasi!", simulation);
