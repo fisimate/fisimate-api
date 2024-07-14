@@ -56,8 +56,54 @@ const update = async (req, res, next) => {
   }
 };
 
+const createProgress = async (req, res, next) => {
+  try {
+    const { id: userId } = req.user;
+    const { simulationId } = req.params;
+    const { currentStep } = req.body;
+
+    const existingProgress = await prisma.simulationProgress.findUnique({
+      where: {
+        userId,
+        simulationId,
+      },
+    });
+
+    if (existingProgress) {
+      if (currentStep > existingProgress.currentStep) {
+        const updatedProgress = await prisma.simulationProgress.update({
+          where: {
+            userId,
+            simulationId,
+          },
+          data: {
+            currentStep,
+          },
+        });
+
+        return apiSuccess(res, "Berhasil update progress!", updatedProgress);
+      }
+
+      return apiSuccess(res, "Berhasil update progress!");
+    } else {
+      const newProgress = await prisma.simulationProgress.create({
+        data: {
+          userId,
+          simulationId,
+          currentStep,
+        },
+      });
+
+      return apiSuccess(res, "Berhasil update progress!", newProgress);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   index,
   show,
   update,
+  createProgress,
 };

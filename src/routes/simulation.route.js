@@ -42,6 +42,13 @@ router.delete(
   materialController.destroy
 );
 
+// progress
+router.post(
+  "/:simulationId/progress",
+  authenticateUser,
+  simulationController.createProgress
+);
+
 // quiz route
 router.get(
   "/:simulationId/quizzes",
