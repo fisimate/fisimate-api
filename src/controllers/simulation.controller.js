@@ -62,6 +62,13 @@ const createProgress = async (req, res, next) => {
     const { simulationId } = req.params;
     const { currentStep } = req.body;
 
+    // check simulation is exist or not
+    await prisma.simulation.findFirstOrThrow({
+      where: {
+        id: simulationId,
+      },
+    });
+
     const existingProgress = await prisma.simulationProgress.findUnique({
       where: {
         userId_simulationId: { userId, simulationId },
