@@ -2,7 +2,14 @@ import prisma from "../lib/prisma.js";
 import generateSlug from "../utils/generateSlug.js";
 
 const getAlls = async () => {
-  const chapters = await prisma.chapter.findMany();
+  const chapters = await prisma.chapter.findMany({
+    include: {
+      materialBanks: true,
+      formulaBanks: true,
+      examBanks: true,
+      simulations: true,
+    },
+  });
 
   return chapters;
 };
