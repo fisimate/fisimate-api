@@ -43,15 +43,16 @@ model Role {
 }
 
 model Chapter {
-  id            String         @id @default(uuid())
-  name          String
-  slug          String
-  createdAt     DateTime       @default(now()) @map("created_at")
-  updatedAt     DateTime       @default(now()) @map("updated_at")
-  examBanks     ExamBank[]
-  materialBanks MaterialBank[]
-  formulaBanks  FormulaBank[]
-  simulations   Simulation[]
+  id               String         @id @default(uuid())
+  name             String
+  slug             String
+  shortDescription String?        @map("short_description")
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @default(now()) @map("updated_at")
+  examBanks        ExamBank[]
+  materialBanks    MaterialBank[]
+  formulaBanks     FormulaBank[]
+  simulations      Simulation[]
 }
 
 model ExamBank {
