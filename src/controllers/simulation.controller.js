@@ -72,8 +72,7 @@ const createProgress = async (req, res, next) => {
       if (currentStep > existingProgress.currentStep) {
         const updatedProgress = await prisma.simulationProgress.update({
           where: {
-            userId,
-            simulationId,
+            userId_simulationId: { userId, simulationId },
           },
           data: {
             currentStep,
