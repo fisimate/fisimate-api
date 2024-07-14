@@ -91,7 +91,7 @@ const updateProfilePicture = async (req) => {
   const extension = path.extname(req.file.originalname);
   const randomName = randomString(14) + extension;
 
-  const blob = bucket.file(`profile_pictures/${randomName}`);
+  const blob = bucket.file(`profile-pictures/${randomName}`);
   const blobStream = blob.createWriteStream({ resumable: true });
 
   return new Promise((resolve, reject) => {
