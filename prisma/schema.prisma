@@ -11,18 +11,19 @@ datasource db {
 }
 
 model User {
-  id             String         @id @default(uuid())
-  fullname       String
-  email          String         @unique
-  nis            String?        @unique
-  password       String?
-  profilePicture String?        @map("profile_picture") @db.Text
-  roleId         String         @map("role_id")
-  createdAt      DateTime       @default(now()) @map("created_at")
-  updatedAt      DateTime       @default(now()) @map("updated_at")
-  refreshTokens  RefreshToken[]
-  role           Role           @relation(fields: [roleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  quizAttempt    QuizAttempt[]
+  id                 String               @id @default(uuid())
+  fullname           String
+  email              String               @unique
+  nis                String?              @unique
+  password           String?
+  profilePicture     String?              @map("profile_picture") @db.Text
+  roleId             String               @map("role_id")
+  createdAt          DateTime             @default(now()) @map("created_at")
+  updatedAt          DateTime             @default(now()) @map("updated_at")
+  refreshTokens      RefreshToken[]
+  role               Role                 @relation(fields: [roleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  quizAttempt        QuizAttempt[]
+  simulationProgress SimulationProgress[]
 }
 
 model RefreshToken {
@@ -96,17 +97,18 @@ model FormulaBank {
 }
 
 model Simulation {
-  id          String        @id @default(uuid())
-  title       String
-  icon        String        @db.Text
-  chapterId   String        @map("chapter_id")
-  chapter     Chapter       @relation(fields: [chapterId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt   DateTime      @default(now()) @map("created_at")
-  updatedAt   DateTime      @default(now()) @map("updated_at")
-  materials   Material[]
-  question    Question[]
-  quizReview  QuizReview[]
-  quizAttempt QuizAttempt[]
+  id                 String               @id @default(uuid())
+  title              String
+  icon               String               @db.Text
+  chapterId          String               @map("chapter_id")
+  chapter            Chapter              @relation(fields: [chapterId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt          DateTime             @default(now()) @map("created_at")
+  updatedAt          DateTime             @default(now()) @map("updated_at")
+  materials          Material[]
+  question           Question[]
+  quizReview         QuizReview[]
+  quizAttempt        QuizAttempt[]
+  simulationProgress SimulationProgress[]
 
   @@index([chapterId])
 }
@@ -179,4 +181,19 @@ model QuizAttempt {
   simulation       Simulation         @relation(fields: [simulationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   user             User               @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userQuizResponse UserQuizResponse[]
+}
+
+model SimulationProgress {
+  id           String   @id @default(uuid())
+  userId       String
+  simulationId String   @map("simulation_id")
+  currentStep  Int      @default(0)
+  totalSteps   Int      @default(3)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  simulation Simulation @relation(fields: [simulationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([userId, simulationId])
 }
