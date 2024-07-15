@@ -44,12 +44,11 @@ const updateProfilePicture = async (req, res, next) => {
 
 const getAllStudents = async (req, res, next) => {
   try {
-    const students = await prisma.role.findMany({
+    const students = await prisma.user.findMany({
       where: {
-        name: "user",
-      },
-      include: {
-        users: true,
+        role: {
+          name: "user",
+        },
       },
     });
 
