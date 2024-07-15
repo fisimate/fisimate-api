@@ -71,6 +71,12 @@ const createStudent = async (req, res, next) => {
 
     const profilePicture = await uploadToBucket(req.file);
 
+    const role = await prisma.role.findFirstOrThrow({
+      where: {
+        name: "user",
+      },
+    });
+
     const students = await prisma.user.create({
       data: {
         email,
@@ -78,6 +84,7 @@ const createStudent = async (req, res, next) => {
         nis,
         password: await encrypt(password),
         profilePicture,
+        roleid: role.id,
       },
     });
 
