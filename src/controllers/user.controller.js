@@ -1,6 +1,7 @@
 import prisma from "../lib/prisma.js";
 import { userService } from "../services/index.js";
 import apiSuccess from "../utils/apiSuccess.js";
+import exclude from "../utils/exclude.js";
 
 const changePassword = async (req, res, next) => {
   try {
