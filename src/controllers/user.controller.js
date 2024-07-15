@@ -84,7 +84,11 @@ const createStudent = async (req, res, next) => {
         nis,
         password: await encrypt(password),
         profilePicture,
-        roleid: role.id,
+        role: {
+          connect: {
+            id: role.id
+          }
+        }
       },
     });
 
