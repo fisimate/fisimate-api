@@ -52,7 +52,11 @@ const getAllStudents = async (req, res, next) => {
       },
     });
 
-    return apiSuccess(res, "Berhasil mendapatkan data siswa!", students);
+    return apiSuccess(
+      res,
+      "Berhasil mendapatkan data siswa!",
+      exclude(students, ["password"])
+    );
   } catch (error) {
     next(error);
   }
