@@ -63,8 +63,8 @@ router.delete(
 );
 router.post(
   "/students/:id/reset",
-  authorizeRoles("teacher"),
   authenticateUser,
+  authorizeRoles("teacher"),
   userController.resetPassword
 );
 
