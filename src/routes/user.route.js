@@ -35,6 +35,12 @@ router.get(
   authorizeRoles("teacher"),
   userController.getAllStudents
 );
+router.get(
+  "/students/:id",
+  authenticateUser,
+  authorizeRoles("teacher"),
+  userController.getOneStudents
+);
 router.post(
   "/students",
   authenticateUser,

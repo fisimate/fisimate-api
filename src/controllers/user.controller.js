@@ -86,9 +86,9 @@ const createStudent = async (req, res, next) => {
         profilePicture,
         role: {
           connect: {
-            id: role.id
-          }
-        }
+            id: role.id,
+          },
+        },
       },
     });
 
@@ -181,6 +181,22 @@ const resetPassword = async (req, res, next) => {
   }
 };
 
+const getOneStudents = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const students = await prisma.user.findFirstOrThrow({
+      where: {
+        id,
+      },
+    });
+
+    return apiSuccess(res, "Berhasil mendapatkan data!", students);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   changePassword,
   updateProfile,
@@ -191,4 +207,5 @@ export default {
   updateStudent,
   deleteStudent,
   resetPassword,
+  getOneStudents,
 };
