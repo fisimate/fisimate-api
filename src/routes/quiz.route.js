@@ -10,7 +10,6 @@ const router = express.Router();
 router.get(
   "/:simulationId",
   authenticateUser,
-  authorizeRoles("teacher"),
   quizController.getQuizBySimulation
 );
 router.post(
