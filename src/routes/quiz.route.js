@@ -1,6 +1,6 @@
 import express from "express";
 import { quizController } from "../controllers/index.js";
-import { authenticateUser } from "../middlewares/auth.js";
+import { authenticateUser, authorizeRoles } from "../middlewares/auth.js";
 import quizAttemptController from "../controllers/quizAttempt.controller.js";
 import quizReviewController from "../controllers/quizReview.controller.js";
 import upload from "../lib/multer.js";
