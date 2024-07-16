@@ -157,7 +157,7 @@ const deleteStudent = async (req, res, next) => {
 
 const resetPassword = async (req, res, next) => {
   try {
-    const { newPasword } = req.body;
+    const { newPassword } = req.body;
     const { id } = req.params;
 
     await prisma.user.findFirstOrThrow({
@@ -171,12 +171,13 @@ const resetPassword = async (req, res, next) => {
         id,
       },
       data: {
-        password: await encrypt(newPasword),
+        password: await encrypt(newPassword),
       },
     });
 
     return apiSuccess(res, "Berhasil reset password!");
   } catch (error) {
+    console.log(error);
     next(error);
   }
 };
