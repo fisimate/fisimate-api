@@ -11,15 +11,22 @@ router.get("/:id", authenticateUser, examBankController.show);
 router.post(
   "/",
   authenticateUser,
+  authorizeRoles("teacher"),
   upload.fields([{ name: "icon" }, { name: "filePath" }]),
   examBankController.create
 );
 router.put(
   "/:id",
   authenticateUser,
+  authorizeRoles("teacher"),
   upload.fields([{ name: "icon" }, { name: "filePath" }]),
   examBankController.update
 );
-router.delete("/:id", authenticateUser, examBankController.destroy);
+router.delete(
+  "/:id",
+  authenticateUser,
+  authorizeRoles("teacher"),
+  examBankController.destroy
+);
 
 export default router;

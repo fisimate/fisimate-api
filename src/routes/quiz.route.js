@@ -10,23 +10,27 @@ const router = express.Router();
 router.get(
   "/:simulationId",
   authenticateUser,
+  authorizeRoles("teacher"),
   quizController.getQuizBySimulation
 );
 router.post(
   "/:simulationId",
   authenticateUser,
+  authorizeRoles("teacher"),
   upload.single("image"),
   quizController.create
 );
 router.put(
   "/:simulationId",
   authenticateUser,
+  authorizeRoles("teacher"),
   upload.fields([{ name: "image", maxCount: 1 }]),
   quizController.update
 );
 router.delete(
   "/:simulationId",
   authenticateUser,
+  authorizeRoles("teacher"),
   quizController.deleteQuizById
 );
 
@@ -67,18 +71,21 @@ router.get(
 router.post(
   "/:simulationId/review",
   authenticateUser,
+  authorizeRoles("teacher"),
   upload.single("filePath"),
   quizReviewController.create
 );
 router.put(
   "/:simulationId/review",
   authenticateUser,
+  authorizeRoles("teacher"),
   upload.single("filePath"),
   quizReviewController.update
 );
 router.delete(
   "/:simulationId/review",
   authenticateUser,
+  authorizeRoles("teacher"),
   quizReviewController.destroy
 );
 

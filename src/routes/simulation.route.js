@@ -14,6 +14,7 @@ router.get("/:id", authenticateUser, simulationController.show);
 router.put(
   "/:id",
   authenticateUser,
+  authorizeRoles("teacher"),
   upload.single("icon"),
   simulationController.update
 );
@@ -27,18 +28,21 @@ router.get(
 router.post(
   "/:simulationId/materials",
   authenticateUser,
+  authorizeRoles("teacher"),
   upload.single("filePath"),
   materialController.create
 );
 router.put(
   "/:simulationId/materials/:id",
   authenticateUser,
+  authorizeRoles("teacher"),
   upload.single("filePath"),
   materialController.update
 );
 router.delete(
   "/:simulationId/materials/:id",
   authenticateUser,
+  authorizeRoles("teacher"),
   materialController.destroy
 );
 

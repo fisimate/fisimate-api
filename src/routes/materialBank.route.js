@@ -11,15 +11,22 @@ router.get("/:id", authenticateUser, materialBankController.show);
 router.post(
   "/",
   authenticateUser,
+  authorizeRoles("teacher"),
   upload.fields([{ name: "icon" }, { name: "filePath" }]),
   materialBankController.create
 );
 router.put(
   "/:id",
   authenticateUser,
+  authorizeRoles("teacher"),
   upload.fields([{ name: "icon" }, { name: "filePath" }]),
   materialBankController.update
 );
-router.delete("/:id", authenticateUser, materialBankController.destroy);
+router.delete(
+  "/:id",
+  authenticateUser,
+  authorizeRoles("teacher"),
+  materialBankController.destroy
+);
 
 export default router;
