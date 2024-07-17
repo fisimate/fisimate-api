@@ -59,5 +59,25 @@ router.get(
   authenticateUser,
   quizController.getQuizBySimulation
 );
+router.post(
+  "/:simulationId/quizzes",
+  authenticateUser,
+  authorizeRoles("teacher"),
+  upload.single("image"),
+  quizController.create
+);
+router.put(
+  "/:simulationId/quizzes",
+  authenticateUser,
+  authorizeRoles("teacher"),
+  upload.fields([{ name: "image", maxCount: 1 }]),
+  quizController.update
+);
+router.delete(
+  "/:simulationId/quizzes",
+  authenticateUser,
+  authorizeRoles("teacher"),
+  quizController.deleteQuizById
+);
 
 export default router;
