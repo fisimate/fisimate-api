@@ -1,5 +1,6 @@
 import prisma from "../lib/prisma.js";
 import apiSuccess from "../utils/apiSuccess.js";
+import uploadToBucket from "../utils/uploadToBucket.js";
 
 // get all quizzes by simulation id
 const getQuizBySimulation = async (req, res, next) => {
@@ -32,7 +33,13 @@ const getQuizBySimulation = async (req, res, next) => {
 const create = async (req, res, next) => {
   try {
     const { simulationId } = req.params;
-    const { text, options } = req.body;
+    const { text } = req.body;
+    let { options } = req.body;
+
+    // Parse options if it's a string
+    if (typeof options === "string") {
+      options = JSON.parse(options);
+    }
 
     await prisma.$transaction(async (prisma) => {
       // Find the existing simulation to ensure it exists
