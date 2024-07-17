@@ -177,15 +177,21 @@ const update = async (req, res, next) => {
 // delete quiz by id
 const deleteQuizById = async (req, res, next) => {
   try {
-    const { simulationId } = req.params;
+    const { questionId } = req.params;
 
-    await prisma.simulation.delete({
+    await prisma.question.findFirstOrThrow({
       where: {
-        id: simulationId,
+        id: questionId,
       },
     });
 
-    return apiSuccess(res, "Berhasil menghapus simulasi!");
+    await prisma.question.delete({
+      where: {
+        id: questionId,
+      },
+    });
+
+    return apiSuccess(res, "Berhasil menghapus data!");
   } catch (error) {
     next(error);
   }

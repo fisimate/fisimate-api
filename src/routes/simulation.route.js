@@ -74,7 +74,7 @@ router.put(
   quizController.update
 );
 router.delete(
-  "/:simulationId/quizzes",
+  "/:simulationId/quizzes/:questionId",
   authenticateUser,
   authorizeRoles("teacher"),
   quizController.deleteQuizById
