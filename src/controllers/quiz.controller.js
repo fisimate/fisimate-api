@@ -86,9 +86,13 @@ const create = async (req, res, next) => {
 
 // Update quiz
 const update = async (req, res, next) => {
+  const { text, deleteImage } = req.body;
+
+  console.log(deleteImage);
+
+  console.log(req.file);
   try {
     const { simulationId, questionId } = req.params;
-    const { text, deleteImage } = req.body;
     let { options } = req.body;
 
     const updatedData = {
@@ -107,7 +111,7 @@ const update = async (req, res, next) => {
     }
 
     // Check if the image should be deleted
-    if (deleteImage) {
+    if (deleteImage == true) {
       updatedData.imageUrl = null;
     }
 
