@@ -84,74 +84,52 @@ const create = async (req, res, next) => {
 // Update quiz
 const update = async (req, res, next) => {
   try {
-    const { simulationId } = req.params;
-    const { questions } = req.body;
+    const { simulationId, questionId } = req.params;
+    const { text, options } = req.body;
+    let imageUrl = null;
 
+    // Check if the image needs to be updated
+    if (req.files && req.files.image) {
+      imageUrl = await uploadToBucket(req.files.image, "quiz-images");
+    }
+
+    // Use a transaction to ensure atomicity
     await prisma.$transaction(async (prisma) => {
-      const updatePromises = questions.map(async (question) => {
-        let imageUrl = null;
+      // Update the question
+      const updatedQuestion = await prisma.question.update({
+        where: { id: questionId },
+        data: {
+          text: text,
+          imageUrl: imageUrl || undefined, // Update imageUrl if a new image is provided
+        },
+      });
 
-        if (question.image && req.files && req.files[question.image]) {
-          imageUrl = await uploadToBucket(
-            req.files[question.image],
-            "quiz-images"
-          );
-        }
-
-        if (question.id) {
-          // If question ID is provided, update the existing question
-          const updatedQuestion = await prisma.question.update({
-            where: { id: question.id },
+      // Update or create quiz options
+      const optionPromises = options.map(async (option) => {
+        if (option.id) {
+          // If option ID is provided, update the existing option
+          return prisma.quizOption.update({
+            where: { id: option.id },
             data: {
-              text: question.text,
-              imageUrl: imageUrl || question.imageUrl, // Update image URL if new image is provided
+              text: option.text,
+              isCorrect: option.isCorrect,
             },
           });
-
-          // Update or create quiz options
-          const optionPromises = question.options.map(async (option) => {
-            if (option.id) {
-              // If option ID is provided, update the existing option
-              return prisma.quizOption.update({
-                where: { id: option.id },
-                data: {
-                  text: option.text,
-                  isCorrect: option.isCorrect,
-                },
-              });
-            } else {
-              // Otherwise, create a new option for the existing question
-              return prisma.quizOption.create({
-                data: {
-                  questionId: updatedQuestion.id,
-                  text: option.text,
-                  isCorrect: option.isCorrect,
-                },
-              });
-            }
-          });
-
-          await Promise.all(optionPromises);
         } else {
-          // Otherwise, create a new question with options
-          await prisma.question.create({
+          // Otherwise, create a new option for the existing question
+          return prisma.quizOption.create({
             data: {
-              simulationId: simulationId,
-              text: question.text,
-              imageUrl,
-              quizOptions: {
-                create: question.options.map((option) => ({
-                  text: option.text,
-                  isCorrect: option.isCorrect,
-                })),
-              },
+              questionId: updatedQuestion.id,
+              text: option.text,
+              isCorrect: option.isCorrect,
             },
           });
         }
       });
 
-      await Promise.all(updatePromises);
+      await Promise.all(optionPromises);
 
+      // Fetch the updated simulation data
       const updatedSimulation = await prisma.simulation.findFirstOrThrow({
         where: { id: simulationId },
         include: {
@@ -165,7 +143,7 @@ const update = async (req, res, next) => {
 
       return apiSuccess(
         res,
-        "Berhasil memperbarui simulasi!",
+        "Berhasil memperbarui pertanyaan!",
         updatedSimulation
       );
     });

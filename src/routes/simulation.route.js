@@ -67,7 +67,7 @@ router.post(
   quizController.create
 );
 router.put(
-  "/:simulationId/quizzes",
+  "/:simulationId/quizzes/:questionId",
   authenticateUser,
   authorizeRoles("teacher"),
   upload.fields([{ name: "image", maxCount: 1 }]),
