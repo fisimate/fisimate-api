@@ -11,5 +11,6 @@ router.get(
   dashboardController.index
 );
 router.get("/leaderboard", authenticateUser, dashboardController.leaderboard);
+router.get("/mobile", authenticateUser, dashboardController.mobileDashboard);
 
 export default router;

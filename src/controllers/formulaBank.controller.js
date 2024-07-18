@@ -10,6 +10,9 @@ const getAll = async (req, res, next) => {
       include: {
         chapter: true,
       },
+      orderBy: {
+        updatedAt: "desc",
+      },
     });
 
     return apiSuccess(res, "Berhasil mendapatkan data!", formulaBank);

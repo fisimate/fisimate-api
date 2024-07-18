@@ -12,6 +12,9 @@ const index = async (req, res, next) => {
       where: {
         simulationId,
       },
+      orderBy: {
+        updatedAt: "desc",
+      },
     });
 
     return apiSuccess(res, "Berhasil mendapatkan data!", simulationReview);

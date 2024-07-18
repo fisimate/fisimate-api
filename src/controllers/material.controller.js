@@ -74,6 +74,9 @@ const destroy = async (req, res, next) => {
       where: {
         id,
       },
+      include: {
+        simulation: true,
+      },
     });
 
     return apiSuccess(res, "Berhasil hapus data!");

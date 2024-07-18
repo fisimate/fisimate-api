@@ -5,6 +5,12 @@ const getMaterial = async (simulationId) => {
     where: {
       simulationId,
     },
+    include: {
+      simulation: true,
+    },
+    orderBy: {
+      updatedAt: "desc",
+    },
   });
 };
 

@@ -25,7 +25,7 @@ const show = async (req, res, next) => {
 
 const create = async (req, res, next) => {
   try {
-    const chapter = await chapterService.create(req.body);
+    const chapter = await chapterService.create(req);
 
     return apiSuccess(res, "Berhasil membuat bab baru!", chapter);
   } catch (error) {
@@ -37,7 +37,7 @@ const update = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const chapter = await chapterService.update(id, req.body);
+    const chapter = await chapterService.update(id, req);
 
     return apiSuccess(res, "Berhasil update bab!", chapter);
   } catch (error) {

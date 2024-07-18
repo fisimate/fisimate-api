@@ -22,8 +22,12 @@ const getAllSimulations = async (req) => {
   const simulations = await prisma.simulation.findMany({
     include: {
       chapter: true,
+      simulationProgress: true,
     },
     where: filterOptions,
+    orderBy: {
+      updatedAt: "desc",
+    },
   });
 
   if (simulations.length === 0) {

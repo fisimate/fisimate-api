@@ -1,6 +1,9 @@
+import { encrypt } from "../lib/bcrypt.js";
 import prisma from "../lib/prisma.js";
 import { userService } from "../services/index.js";
 import apiSuccess from "../utils/apiSuccess.js";
+import exclude from "../utils/exclude.js";
+import uploadToBucket from "../utils/uploadToBucket.js";
 
 const changePassword = async (req, res, next) => {
   try {
@@ -44,16 +47,152 @@ const updateProfilePicture = async (req, res, next) => {
 
 const getAllStudents = async (req, res, next) => {
   try {
-    const students = await prisma.role.findMany({
+    const students = await prisma.user.findMany({
       where: {
-        name: "user",
-      },
-      include: {
-        users: true,
+        role: {
+          name: "user",
+        },
       },
     });
 
-    return apiSuccess(res, "Berhasil mendapatkan data siswa!", students);
+    return apiSuccess(
+      res,
+      "Berhasil mendapatkan data siswa!",
+      exclude(students, ["password"])
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+const createStudent = async (req, res, next) => {
+  try {
+    const { email, fullname, nis, password } = req.body;
+
+    const profilePicture = await uploadToBucket(req.file);
+
+    const role = await prisma.role.findFirstOrThrow({
+      where: {
+        name: "user",
+      },
+    });
+
+    const students = await prisma.user.create({
+      data: {
+        email,
+        fullname,
+        nis,
+        password: await encrypt(password),
+        profilePicture,
+        role: {
+          connect: {
+            id: role.id,
+          },
+        },
+      },
+    });
+
+    return apiSuccess(res, "Berhasil membuat data!", students);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateStudent = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { email, nis, fullname } = req.body;
+
+    const updatedData = {
+      email,
+      nis,
+      fullname,
+    };
+
+    await prisma.user.findFirstOrThrow({
+      where: {
+        id,
+      },
+    });
+
+    if (req.file) {
+      const pictureUrl = await uploadToBucket(req.file);
+      updatedData.profilePicture = pictureUrl;
+    }
+
+    const students = await prisma.user.update({
+      data: updatedData,
+      where: {
+        id,
+      },
+    });
+
+    return apiSuccess(res, "Berhasil update data!", students);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteStudent = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    await prisma.user.findFirstOrThrow({
+      where: {
+        id,
+      },
+    });
+
+    await prisma.user.delete({
+      where: {
+        id,
+      },
+    });
+
+    return apiSuccess(res, "Berhasil hapus data!");
+  } catch (error) {
+    next(error);
+  }
+};
+
+const resetPassword = async (req, res, next) => {
+  try {
+    const { newPassword } = req.body;
+    const { id } = req.params;
+
+    await prisma.user.findFirstOrThrow({
+      where: {
+        id,
+      },
+    });
+
+    await prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        password: await encrypt(newPassword),
+      },
+    });
+
+    return apiSuccess(res, "Berhasil reset password!");
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+const getOneStudents = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const students = await prisma.user.findFirstOrThrow({
+      where: {
+        id,
+      },
+    });
+
+    return apiSuccess(res, "Berhasil mendapatkan data!", students);
   } catch (error) {
     next(error);
   }
@@ -65,4 +204,9 @@ export default {
   getProfile,
   updateProfilePicture,
   getAllStudents,
+  createStudent,
+  updateStudent,
+  deleteStudent,
+  resetPassword,
+  getOneStudents,
 };

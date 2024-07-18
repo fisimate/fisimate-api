@@ -14,6 +14,32 @@ const getAllAttempts = async (req, res, next) => {
         simulation: true,
         userQuizResponse: true,
       },
+      orderBy: {
+        attemptAt: "desc",
+      },
+    });
+
+    return apiSuccess(res, "Berhasil mendapatkan data!", attempts);
+  } catch (error) {
+    next(error);
+  }
+};
+// history berdasarkan user id di params
+const getAttemptHistories = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+
+    const attempts = await prisma.quizAttempt.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        simulation: true,
+        userQuizResponse: true,
+      },
+      orderBy: {
+        attemptAt: "desc",
+      },
     });
 
     return apiSuccess(res, "Berhasil mendapatkan data!", attempts);
@@ -58,7 +84,8 @@ const getAttemptBySimulationId = async (req, res, next) => {
 const createAttempt = async (req, res, next) => {
   try {
     const { id: userId } = req.user;
-    const { simulationId, responses } = req.body;
+    const { responses } = req.body;
+    const { simulationId } = req.params;
 
     // Validate simulationId
     const simulation = await prisma.simulation.findFirstOrThrow({
@@ -72,13 +99,6 @@ const createAttempt = async (req, res, next) => {
         userId,
       },
     });
-
-    if (existingAttempt) {
-      return res.status(400).json({
-        success: false,
-        message: "User has already attempted this simulation.",
-      });
-    }
 
     // Validate responses
     if (!Array.isArray(responses) || responses.length === 0) {
@@ -123,15 +143,31 @@ const createAttempt = async (req, res, next) => {
     // Start a transaction
     await prisma
       .$transaction(async (prisma) => {
-        // Step 1: Create a new quiz attempt
-        const quizAttempt = await prisma.quizAttempt.create({
-          data: {
-            simulationId,
-            userId,
-            score: 0, // Initial score is 0, will be updated after evaluating responses
-            attemptAt: new Date(),
-          },
-        });
+        let quizAttempt;
+        if (existingAttempt) {
+          // Delete existing response
+          await prisma.userQuizResponse.deleteMany({
+            where: { quizAttemptId: existingAttempt.id },
+          });
+
+          // Step 2: Update the existing quiz attempt
+          quizAttempt = await prisma.quizAttempt.update({
+            where: { id: existingAttempt.id },
+            data: {
+              attemptAt: new Date(),
+              score: 0, // Reset score to 0, will be updated after evaluating responses
+            },
+          });
+        } else {
+          quizAttempt = await prisma.quizAttempt.create({
+            data: {
+              simulationId,
+              userId,
+              score: 0,
+              attemptAt: new Date(),
+            },
+          });
+        }
 
         const attemptId = quizAttempt.id;
 
@@ -157,25 +193,41 @@ const createAttempt = async (req, res, next) => {
           },
         });
 
+        const totalQuestions = await prisma.question.count({
+          where: {
+            simulationId,
+          },
+        });
+
         // Assuming each simulation has exactly 4 questions
-        const totalQuestions = 4;
         const correctCount = correctResponses.length;
 
         // Step 4: Calculate the score out of 100
         const score = (correctCount / totalQuestions) * 100;
 
+        const finalScore = Math.round(score);
+
+        const notAnswered = totalQuestions - responses.length;
+
         // Step 5: Update the score of the quiz attempt
         await prisma.quizAttempt.update({
           where: { id: attemptId },
-          data: { score },
+          data: { score: finalScore },
         });
 
-        return { savedResponses, score };
+        return {
+          savedResponses,
+          finalScore,
+          notAnswered,
+          answered: responses.length,
+        };
       })
       .then((result) => {
         return apiSuccess(res, "Berhasil menjawab simulasi!", {
           savedResponses: result.savedResponses,
-          score: result.score,
+          score: result.finalScore,
+          notAnswered: result.notAnswered,
+          answered: result.answered,
         });
       })
       .catch((error) => {
@@ -225,18 +277,8 @@ const getUserScore = async (req, res, next) => {
     // Prepare the result data
     const result = {
       score: quizAttempt.score,
-      correctResponses: correctResponses.map((response) => ({
-        questionId: response.question.id,
-        questionText: response.question.text,
-        selectedOptionId: response.selectedOption.id,
-        selectedOptionText: response.selectedOption.text,
-      })),
-      incorrectResponses: incorrectResponses.map((response) => ({
-        questionId: response.question.id,
-        questionText: response.question.text,
-        selectedOptionId: response.selectedOption.id,
-        selectedOptionText: response.selectedOption.text,
-      })),
+      correctResponses: correctResponses.length,
+      incorrectResponses: incorrectResponses.length,
     };
 
     return res.json({
@@ -254,4 +296,5 @@ export default {
   getAttemptBySimulationId,
   createAttempt,
   getUserScore,
+  getAttemptHistories,
 };

@@ -1,6 +1,6 @@
 import express from "express";
 import { quizController } from "../controllers/index.js";
-import { authenticateUser } from "../middlewares/auth.js";
+import { authenticateUser, authorizeRoles } from "../middlewares/auth.js";
 import quizAttemptController from "../controllers/quizAttempt.controller.js";
 import quizReviewController from "../controllers/quizReview.controller.js";
 import upload from "../lib/multer.js";
@@ -15,23 +15,30 @@ router.get(
 router.post(
   "/:simulationId",
   authenticateUser,
+  authorizeRoles("teacher"),
   upload.single("image"),
   quizController.create
 );
 router.put(
   "/:simulationId",
   authenticateUser,
+  authorizeRoles("teacher"),
   upload.fields([{ name: "image", maxCount: 1 }]),
   quizController.update
 );
 router.delete(
   "/:simulationId",
   authenticateUser,
+  authorizeRoles("teacher"),
   quizController.deleteQuizById
 );
 
 // attempt simulation
-router.post("/attempt", authenticateUser, quizAttemptController.createAttempt);
+router.post(
+  "/:simulationId/attempt",
+  authenticateUser,
+  quizAttemptController.createAttempt
+);
 router.get(
   "/result/:simulationId",
   authenticateUser,
@@ -43,9 +50,15 @@ router.get(
   quizAttemptController.getAllAttempts
 );
 router.get(
-  "/attempt/:simulationId",
+  "/:simulationId/attempt",
   authenticateUser,
   quizAttemptController.getAttemptBySimulationId
+);
+// get attempt history
+router.get(
+  "/attempt/history/:userId",
+  authenticateUser,
+  quizAttemptController.getAttemptHistories
 );
 
 // simulation review
@@ -57,18 +70,21 @@ router.get(
 router.post(
   "/:simulationId/review",
   authenticateUser,
+  authorizeRoles("teacher"),
   upload.single("filePath"),
   quizReviewController.create
 );
 router.put(
   "/:simulationId/review",
   authenticateUser,
+  authorizeRoles("teacher"),
   upload.single("filePath"),
   quizReviewController.update
 );
 router.delete(
   "/:simulationId/review",
   authenticateUser,
+  authorizeRoles("teacher"),
   quizReviewController.destroy
 );
 

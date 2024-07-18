@@ -8,6 +8,9 @@ const getAllQuestions = async (quizId) => {
     include: {
       quizOptions: true,
     },
+    orderBy: {
+      updatedAt: "desc",
+    },
   });
 };
 
