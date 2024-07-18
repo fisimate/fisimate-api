@@ -87,7 +87,10 @@ const update = async (req, res, next) => {
     const { simulationId, questionId } = req.params;
     const { text } = req.body;
     let { options } = req.body;
-    let imageUrl = null;
+
+    const updatedData = {
+      text,
+    };
 
     // Parse options if it's a string
     if (typeof options === "string") {
@@ -95,8 +98,9 @@ const update = async (req, res, next) => {
     }
 
     // Check if the image needs to be updated
-    if (req.files && req.files.image) {
-      imageUrl = await uploadToBucket(req.files.image, "quiz-images");
+    if (req.file) {
+      const imageUrl = await uploadToBucket(req.file, "quiz-images");
+      updatedData.imageUrl = imageUrl;
     }
 
     // Use a transaction to ensure atomicity
@@ -104,10 +108,7 @@ const update = async (req, res, next) => {
       // Update the question
       const updatedQuestion = await prisma.question.update({
         where: { id: questionId },
-        data: {
-          text: text,
-          imageUrl: imageUrl || undefined, // Update imageUrl if a new image is provided
-        },
+        data: updatedData,
       });
 
       // Update or create quiz options

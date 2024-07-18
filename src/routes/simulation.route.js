@@ -70,7 +70,7 @@ router.put(
   "/:simulationId/quizzes/:questionId",
   authenticateUser,
   authorizeRoles("teacher"),
-  upload.fields([{ name: "image", maxCount: 1 }]),
+  upload.single("image"),
   quizController.update
 );
 router.delete(
