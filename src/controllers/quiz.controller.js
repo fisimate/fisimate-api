@@ -17,7 +17,7 @@ const getQuizBySimulation = async (req, res, next) => {
             quizOptions: true,
           },
           orderBy: {
-            createdAt: true,
+            createdAt: "desc",
           },
         },
       },
