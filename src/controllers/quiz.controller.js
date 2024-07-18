@@ -16,10 +16,13 @@ const getQuizBySimulation = async (req, res, next) => {
           include: {
             quizOptions: true,
           },
+          orderBy: {
+            createdAt: true,
+          },
         },
       },
       orderBy: {
-        updatedAt: "desc",
+        createdAt: "desc",
       },
     });
 
