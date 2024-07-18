@@ -85,8 +85,14 @@ const create = async (req, res, next) => {
 const update = async (req, res, next) => {
   try {
     const { simulationId, questionId } = req.params;
-    const { text, options } = req.body;
+    const { text } = req.body;
+    let { options } = req.body;
     let imageUrl = null;
+
+    // Parse options if it's a string
+    if (typeof options === "string") {
+      options = JSON.parse(options);
+    }
 
     // Check if the image needs to be updated
     if (req.files && req.files.image) {
