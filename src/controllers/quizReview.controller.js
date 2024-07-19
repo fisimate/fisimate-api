@@ -8,7 +8,7 @@ const index = async (req, res, next) => {
   try {
     const { simulationId } = req.params;
 
-    const simulationReview = await prisma.quizReview.findFirstOrThrow({
+    const simulationReview = await prisma.quizReview.findFirst({
       where: {
         simulationId,
       },
