@@ -89,18 +89,18 @@ const destroy = async (req, res, next) => {
   try {
     const { simulationId } = req.params;
 
-    await prisma.quizReview.findFirstOrThrow({
+    const quizReview = await prisma.quizReview.findFirstOrThrow({
       where: {
         simulationId,
       },
     });
 
+    // Delete the quizReview using its unique id
     await prisma.quizReview.delete({
       where: {
-        simulationId,
+        id: quizReview.id,
       },
     });
-
     return apiSuccess(res, "Berhasil hapus data!");
   } catch (error) {
     next(error);
