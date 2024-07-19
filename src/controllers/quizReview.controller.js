@@ -70,14 +70,18 @@ const update = async (req, res, next) => {
 
     const fileUrl = await uploadToBucket(file, "simulation-reviews");
 
+    const quizReview = await prisma.quizReview.findFirstOrThrow({
+      where: {
+        simulationId,
+      },
+    });
+
     const simulationReview = await prisma.quizReview.update({
       data: {
         filePath: fileUrl,
       },
       where: {
-        simulation: {
-          id: simulationId,
-        },
+        id: quizReview.id,
       },
     });
 
