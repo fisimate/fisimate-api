@@ -75,7 +75,9 @@ const update = async (req, res, next) => {
         filePath: fileUrl,
       },
       where: {
-        simulationId,
+        simulation: {
+          id: simulationId,
+        },
       },
     });
 
