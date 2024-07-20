@@ -106,7 +106,7 @@ const update = async (req, res, next) => {
     }
 
     // Check if the image should be deleted
-    if (deleteImage == true) {
+    if (deleteImage == "true") {
       updatedData.imageUrl = null;
     } else {
       // Check if the image needs to be updated
