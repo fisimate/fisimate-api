@@ -208,7 +208,7 @@ const generate = async (req, res, next) => {
       },
     });
 
-    const prompt = `Buatkan saya soal fisika tentang ${simulation.title} bab ${simulation.chapter.name} dan berikan response dengan format: {"questions": "<<soal akan berada disini>>","options": [{"option": "<<pilihan jawaban 1>>","correct": <<boolean>>},{"option": "<<pilihan jawaban 2>>","correct": <<boolean>>},{"option": "<<pilihan jawaban 3>>","correct": <<boolean>>},{"option": "<<pilihan jawaban 4>>","correct": <<boolean>>}]}`;
+    const prompt = `Buatkan saya soal fisika tentang ${simulation.title} bab ${simulation.chapter.name}, buat setiap respon anda berbeda dengan respon sebelumnya dan berikan response dengan format: {"text": "<<soal akan berada disini>>","quizOptions": [{"text": "<<pilihan jawaban 1>>","isCorrect": <<boolean>>},{"text": "<<pilihan jawaban 2>>","isCorrect": <<boolean>>},{"text": "<<pilihan jawaban 3>>","isCorrect": <<boolean>>},{"text": "<<pilihan jawaban 4>>","isCorrect": <<boolean>>}]}`;
 
     const geminiResponse = await geminiModel.generateContent(prompt);
 
@@ -220,7 +220,9 @@ const generate = async (req, res, next) => {
       response = response.slice(7, -3).trim();
     }
 
-    return apiSuccess(res, "Berhasil generate soal!", response);
+    const jsonResponse = JSON.parse(response);
+
+    return apiSuccess(res, "Berhasil generate soal!", jsonResponse);
   } catch (error) {
     next(error);
   }
