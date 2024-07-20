@@ -80,4 +80,11 @@ router.delete(
   quizController.deleteQuizById
 );
 
+// generate route
+router.get(
+  "/:simulationId/generate",
+  authenticateUser,
+  quizController.generate
+);
+
 export default router;

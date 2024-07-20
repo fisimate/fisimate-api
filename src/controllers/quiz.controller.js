@@ -1,3 +1,4 @@
+import geminiModel from "../lib/gemini.js";
 import prisma from "../lib/prisma.js";
 import apiSuccess from "../utils/apiSuccess.js";
 import uploadToBucket from "../utils/uploadToBucket.js";
@@ -194,9 +195,41 @@ const deleteQuizById = async (req, res, next) => {
   }
 };
 
+const generate = async (req, res, next) => {
+  try {
+    const { simulationId } = req.params;
+
+    const simulation = await prisma.simulation.findFirstOrThrow({
+      where: {
+        id: simulationId,
+      },
+      include: {
+        chapter: true,
+      },
+    });
+
+    const prompt = `Buatkan saya soal fisika tentang ${simulation.title} bab ${simulation.chapter.name} dan berikan response dengan format: {"questions": "<<soal akan berada disini>>","options": [{"option": "<<pilihan jawaban 1>>","correct": <<boolean>>},{"option": "<<pilihan jawaban 2>>","correct": <<boolean>>},{"option": "<<pilihan jawaban 3>>","correct": <<boolean>>},{"option": "<<pilihan jawaban 4>>","correct": <<boolean>>}]}`;
+
+    const geminiResponse = await geminiModel.generateContent(prompt);
+
+    const result = await geminiResponse.response;
+
+    let response = result.text();
+
+    if (response.startsWith("```json") && response.endsWith("```")) {
+      response = response.slice(7, -3).trim();
+    }
+
+    return apiSuccess(res, "Berhasil generate soal!", response);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   getQuizBySimulation,
   create,
   update,
   deleteQuizById,
+  generate,
 };
