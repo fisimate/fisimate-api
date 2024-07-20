@@ -1,7 +1,7 @@
 import prisma from "../lib/prisma.js";
 
 const getMaterial = async (simulationId) => {
-  return await prisma.material.findFirstOrThrow({
+  return await prisma.material.findFirst({
     where: {
       simulationId,
     },
@@ -15,7 +15,7 @@ const getMaterial = async (simulationId) => {
 };
 
 const getOne = async (id) => {
-  return await prisma.material.findFirstOrThrow({
+  return await prisma.material.findFirst({
     where: {
       id,
     },
