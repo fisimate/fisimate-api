@@ -79,6 +79,12 @@ const destroy = async (req, res, next) => {
       },
     });
 
+    await prisma.material.delete({
+      where: {
+        id,
+      },
+    });
+
     return apiSuccess(res, "Berhasil hapus data!");
   } catch (error) {
     next(error);
