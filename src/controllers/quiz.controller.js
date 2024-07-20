@@ -132,7 +132,7 @@ const update = async (req, res, next) => {
       const optionPromises = options.map(async (option) => {
         if (option.id) {
           // If option ID is provided, update the existing option
-          return prisma.quizOption.update({
+          return await prisma.quizOption.update({
             where: { id: option.id },
             data: {
               text: option.text,
@@ -141,7 +141,7 @@ const update = async (req, res, next) => {
           });
         } else {
           // Otherwise, create a new option for the existing question
-          return prisma.quizOption.create({
+          return await prisma.quizOption.create({
             data: {
               questionId: updatedQuestion.id,
               text: option.text,
