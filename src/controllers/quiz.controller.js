@@ -91,12 +91,8 @@ const create = async (req, res, next) => {
 
 // Update quiz
 const update = async (req, res, next) => {
-  const { text, deleteImage } = req.body;
-
-  console.log(deleteImage);
-
-  console.log(req.file);
   try {
+    const { text, deleteImage } = req.body;
     const { simulationId, questionId } = req.params;
     let { options } = req.body;
 
@@ -109,15 +105,15 @@ const update = async (req, res, next) => {
       options = JSON.parse(options);
     }
 
-    // Check if the image needs to be updated
-    if (req.file) {
-      const imageUrl = await uploadToBucket(req.file, "quiz-images");
-      updatedData.imageUrl = imageUrl;
-    }
-
     // Check if the image should be deleted
     if (deleteImage == true) {
       updatedData.imageUrl = null;
+    } else {
+      // Check if the image needs to be updated
+      if (req.file) {
+        const imageUrl = await uploadToBucket(req.file, "quiz-images");
+        updatedData.imageUrl = imageUrl;
+      }
     }
 
     // Use a transaction to ensure atomicity
