@@ -15,7 +15,11 @@ const getQuizBySimulation = async (req, res, next) => {
       include: {
         question: {
           include: {
-            quizOptions: true,
+            quizOptions: {
+              orderBy: {
+                createdAt: "desc",
+              },
+            },
           },
           orderBy: {
             createdAt: "desc",
