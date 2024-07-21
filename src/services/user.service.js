@@ -83,9 +83,19 @@ const getOneUser = async (req) => {
 
 const updateProfilePicture = async (req) => {
   const { id } = req.user;
+  const { profilePicture } = req.body;
 
-  if (!req.file) {
-    throw new BadRequestError("File belum diupload!");
+  if (!req.file && profilePicture == null) {
+    await prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        profilePicture: null,
+      },
+    });
+
+    return;
   }
 
   const extension = path.extname(req.file.originalname);
