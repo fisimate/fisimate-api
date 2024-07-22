@@ -53,13 +53,19 @@ const getAllStudents = async (req, res, next) => {
           name: "user",
         },
       },
+      select: {
+        id: true,
+        fullname: true,
+        email: true,
+        nis: true,
+        profilePicture: true,
+        roleId: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
 
-    return apiSuccess(
-      res,
-      "Berhasil mendapatkan data siswa!",
-      exclude(students, ["password"])
-    );
+    return apiSuccess(res, "Berhasil mendapatkan data siswa!", students);
   } catch (error) {
     next(error);
   }

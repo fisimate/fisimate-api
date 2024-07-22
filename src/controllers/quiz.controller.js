@@ -1,3 +1,4 @@
+import geminiModel from "../lib/gemini.js";
 import prisma from "../lib/prisma.js";
 import apiSuccess from "../utils/apiSuccess.js";
 import uploadToBucket from "../utils/uploadToBucket.js";
@@ -14,7 +15,11 @@ const getQuizBySimulation = async (req, res, next) => {
       include: {
         question: {
           include: {
-            quizOptions: true,
+            quizOptions: {
+              orderBy: {
+                createdAt: "desc",
+              },
+            },
           },
           orderBy: {
             createdAt: "desc",
@@ -86,12 +91,8 @@ const create = async (req, res, next) => {
 
 // Update quiz
 const update = async (req, res, next) => {
-  const { text, deleteImage } = req.body;
-
-  console.log(deleteImage);
-
-  console.log(req.file);
   try {
+    const { text, deleteImage } = req.body;
     const { simulationId, questionId } = req.params;
     let { options } = req.body;
 
@@ -104,15 +105,15 @@ const update = async (req, res, next) => {
       options = JSON.parse(options);
     }
 
-    // Check if the image needs to be updated
-    if (req.file) {
-      const imageUrl = await uploadToBucket(req.file, "quiz-images");
-      updatedData.imageUrl = imageUrl;
-    }
-
     // Check if the image should be deleted
-    if (deleteImage == true) {
+    if (deleteImage == "true") {
       updatedData.imageUrl = null;
+    } else {
+      // Check if the image needs to be updated
+      if (req.file) {
+        const imageUrl = await uploadToBucket(req.file, "quiz-images");
+        updatedData.imageUrl = imageUrl;
+      }
     }
 
     // Use a transaction to ensure atomicity
@@ -127,7 +128,7 @@ const update = async (req, res, next) => {
       const optionPromises = options.map(async (option) => {
         if (option.id) {
           // If option ID is provided, update the existing option
-          return prisma.quizOption.update({
+          return await prisma.quizOption.update({
             where: { id: option.id },
             data: {
               text: option.text,
@@ -136,7 +137,7 @@ const update = async (req, res, next) => {
           });
         } else {
           // Otherwise, create a new option for the existing question
-          return prisma.quizOption.create({
+          return await prisma.quizOption.create({
             data: {
               questionId: updatedQuestion.id,
               text: option.text,
@@ -194,9 +195,43 @@ const deleteQuizById = async (req, res, next) => {
   }
 };
 
+const generate = async (req, res, next) => {
+  try {
+    const { simulationId } = req.params;
+
+    const simulation = await prisma.simulation.findFirstOrThrow({
+      where: {
+        id: simulationId,
+      },
+      include: {
+        chapter: true,
+      },
+    });
+
+    const prompt = `Buatkan saya soal fisika tentang ${simulation.title} bab ${simulation.chapter.name}, buat setiap respon anda berbeda dengan respon sebelumnya dan berikan response dengan format: {"text": "<<soal akan berada disini>>","quizOptions": [{"text": "<<pilihan jawaban 1>>","isCorrect": <<boolean>>},{"text": "<<pilihan jawaban 2>>","isCorrect": <<boolean>>},{"text": "<<pilihan jawaban 3>>","isCorrect": <<boolean>>},{"text": "<<pilihan jawaban 4>>","isCorrect": <<boolean>>}]}`;
+
+    const geminiResponse = await geminiModel.generateContent(prompt);
+
+    const result = await geminiResponse.response;
+
+    let response = result.text();
+
+    if (response.startsWith("```json") && response.endsWith("```")) {
+      response = response.slice(7, -3).trim();
+    }
+
+    const jsonResponse = JSON.parse(response);
+
+    return apiSuccess(res, "Berhasil generate soal!", jsonResponse);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   getQuizBySimulation,
   create,
   update,
   deleteQuizById,
+  generate,
 };

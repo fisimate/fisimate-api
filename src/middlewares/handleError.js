@@ -37,7 +37,6 @@ const errorHandlerMiddleware = (err, req, res, next) => {
     customError.message = `Token expired!`;
   } else if (err instanceof multer.MulterError) {
     customError.statusCode = 400;
-    customError.message = "Invalid file format!";
   }
 
   return res.status(customError.statusCode).json({

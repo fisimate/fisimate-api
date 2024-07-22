@@ -22,7 +22,11 @@ const getAllSimulations = async (req) => {
   const simulations = await prisma.simulation.findMany({
     include: {
       chapter: true,
-      simulationProgress: true,
+      simulationProgress: {
+        where: {
+          userId: req.user.id,
+        },
+      },
     },
     where: filterOptions,
     orderBy: {

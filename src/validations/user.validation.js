@@ -30,9 +30,11 @@ const updateProfile = z.object({
     fullname: z.string({
       required_error: "Fullname perlu diisi!",
     }),
-    nis: z.string({
-      required_error: "NIS perlu diisi!",
-    }),
+    nis: z
+      .string({
+        required_error: "NIS perlu diisi!",
+      })
+      .optional(),
   }),
 });
 
@@ -42,7 +44,8 @@ const updatePicture = z.object({
       .string()
       .refine((mimetype) => mimetype.startsWith("image/"), {
         message: "Format file tidak valid",
-      }),
+      })
+      .optional(),
     buffer: z.instanceof(Buffer, { message: "File is required" }),
   }),
 });
