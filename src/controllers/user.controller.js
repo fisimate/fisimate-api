@@ -75,7 +75,7 @@ const createStudent = async (req, res, next) => {
   try {
     const { email, fullname, nis, password } = req.body;
 
-    const profilePicture = await uploadToBucket(req.file);
+    const profilePicture = await uploadToBucket(req.file, "profile-pictures");
 
     const role = await prisma.role.findFirstOrThrow({
       where: {
@@ -122,7 +122,7 @@ const updateStudent = async (req, res, next) => {
     });
 
     if (req.file) {
-      const pictureUrl = await uploadToBucket(req.file);
+      const pictureUrl = await uploadToBucket(req.file, "profile-pictures");
       updatedData.profilePicture = pictureUrl;
     }
 
