@@ -7,6 +7,7 @@ const validate = (schema) => {
         body: req.body,
         query: req.query,
         params: req.params,
+        files: req.files,
         file: req.file,
       });
 

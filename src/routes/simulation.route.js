@@ -6,6 +6,10 @@ import {
 } from "../controllers/index.js";
 import { authenticateUser, authorizeRoles } from "../middlewares/auth.js";
 import upload from "../lib/multer.js";
+import validate from "../middlewares/validate.js";
+import simulationValidation from "../validations/simulation.validation.js";
+import materialValidation from "../validations/material.validation.js";
+import questionValidation from "../validations/question.validation.js";
 
 const router = express.Router();
 
@@ -16,6 +20,7 @@ router.put(
   authenticateUser,
   authorizeRoles("teacher"),
   upload.single("icon"),
+  validate(simulationValidation.updateData),
   simulationController.update
 );
 
@@ -30,6 +35,7 @@ router.post(
   authenticateUser,
   authorizeRoles("teacher"),
   upload.single("filePath"),
+  validate(materialValidation.createData),
   materialController.create
 );
 router.put(
@@ -37,6 +43,7 @@ router.put(
   authenticateUser,
   authorizeRoles("teacher"),
   upload.single("filePath"),
+  validate(materialValidation.updateData),
   materialController.update
 );
 router.delete(
@@ -64,6 +71,7 @@ router.post(
   authenticateUser,
   authorizeRoles("teacher"),
   upload.single("image"),
+  validate(questionValidation.createData),
   quizController.create
 );
 router.put(

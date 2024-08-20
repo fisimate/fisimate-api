@@ -4,6 +4,8 @@ import { authenticateUser, authorizeRoles } from "../middlewares/auth.js";
 import quizAttemptController from "../controllers/quizAttempt.controller.js";
 import quizReviewController from "../controllers/quizReview.controller.js";
 import upload from "../lib/multer.js";
+import validate from "../middlewares/validate.js";
+import quizReviewValidation from "../validations/quizReview.validation.js";
 
 const router = express.Router();
 
@@ -72,6 +74,7 @@ router.post(
   authenticateUser,
   authorizeRoles("teacher"),
   upload.single("filePath"),
+  validate(quizReviewValidation.createData),
   quizReviewController.create
 );
 router.put(
@@ -79,6 +82,7 @@ router.put(
   authenticateUser,
   authorizeRoles("teacher"),
   upload.single("filePath"),
+  validate(quizReviewValidation.updateData),
   quizReviewController.update
 );
 router.delete(

@@ -2,6 +2,8 @@ import express from "express";
 import { formulaBankController } from "../controllers/index.js";
 import { authenticateUser, authorizeRoles } from "../middlewares/auth.js";
 import upload from "../lib/multer.js";
+import bankValidation from "../validations/bank.validation.js";
+import validate from "../middlewares/validate.js";
 
 const router = express.Router();
 
@@ -13,6 +15,7 @@ router.post(
   authenticateUser,
   authorizeRoles("teacher"),
   upload.fields([{ name: "icon" }, { name: "filePath" }]),
+  validate(bankValidation.createData),
   formulaBankController.create
 );
 router.put(
@@ -20,6 +23,7 @@ router.put(
   authenticateUser,
   authorizeRoles("teacher"),
   upload.fields([{ name: "icon" }, { name: "filePath" }]),
+  validate(bankValidation.updateData),
   formulaBankController.update
 );
 router.delete(

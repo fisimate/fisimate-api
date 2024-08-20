@@ -1,16 +1,78 @@
-import { z } from "zod";
+import { optional, z } from "zod";
 
-const validate = z.object({
+const optionSchema = z.object({
+  id: z.string().optional().nullable(),
+  text: z.string().min(1, "Opsi jawaban tidak boleh kosong!"),
+  isCorrect: z.boolean(),
+});
+
+const createData = z.object({
   body: z.object({
-    text: z.string({
-      required_error: "Pertanyaan perlu diisi!",
-    }),
-    quizId: z.string({
-      required_error: "ID Kuis perlu diisi!",
-    }),
+    text: z.string().min(1, "Pertanyaan tidak boleh kosong!"),
+    options: z
+      .array(optionSchema)
+      .length(4, "Opsi jawaban harus ada empat!")
+      .refine(
+        (options) => options.filter((option) => option.isCorrect).length === 1,
+        {
+          message: "Harus ada satu jawaban yang bernilai benar!",
+        }
+      ),
+    deleteImage: z.boolean(),
   }),
+  file: z
+    .array(
+      z.object({
+        mimetype: z
+          .string()
+          .refine(
+            (mime) =>
+              mime === "image/png" ||
+              mime === "image/jpeg" ||
+              mime === "image/jpg",
+            {
+              message: "Gambar Soal harus berupa gambar (PNG/JPEG)",
+            }
+          ),
+      })
+    )
+    .optional(),
+});
+
+const updateData = z.object({
+  body: z.object({
+    text: z.string().min(1, "Pertanyaan tidak boleh kosong!"),
+    options: z
+      .array(optionSchema)
+      .length(4, "Opsi jawaban harus ada empat!")
+      .refine(
+        (options) => options.filter((option) => option.isCorrect).length === 1,
+        {
+          message: "Harus ada satu jawaban yang bernilai benar!",
+        }
+      ),
+    deleteImage: z.boolean(),
+  }),
+  file: z
+    .array(
+      z.object({
+        mimetype: z
+          .string()
+          .refine(
+            (mime) =>
+              mime === "image/png" ||
+              mime === "image/jpeg" ||
+              mime === "image/jpg",
+            {
+              message: "Gambar Soal harus berupa gambar (PNG/JPEG)",
+            }
+          ),
+      })
+    )
+    .optional(),
 });
 
 export default {
-  validate,
+  createData,
+  updateData,
 };

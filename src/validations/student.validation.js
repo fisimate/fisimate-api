@@ -2,10 +2,10 @@ import { z } from "zod";
 
 const createData = z.object({
   body: z.object({
-    name: z.string().min(1, { message: "Nama bab perlu diisi!" }),
-    shortDescription: z
-      .string()
-      .min(1, { message: "Deskripsi singkat perlu diisi!" }),
+    fullname: z.string().min(1, { message: "Nama lengkap perlu diisi!" }),
+    email: z.string().min(1, { message: "Email perlu diisi!" }),
+    nis: z.string().min(1, { message: "NIS perlu diisi!" }),
+    password: z.string().min(1, { message: "Password perlu diisi!" }),
   }),
   file: z
     .array(
@@ -18,20 +18,20 @@ const createData = z.object({
               mime === "image/jpeg" ||
               mime === "image/jpg",
             {
-              message: "Icon harus berupa gambar (PNG/JPEG)",
+              message: "Foto Profil harus berupa gambar (PNG/JPEG)",
             }
           ),
       })
     )
-    .length(1, "Icon diperlukan"),
+    .length(1, "Foto Profil diperlukan"),
 });
 
 const updateData = z.object({
   body: z.object({
-    name: z.string().min(1, { message: "Nama bab perlu diisi!" }),
-    shortDescription: z
-      .string()
-      .min(1, { message: "Deskripsi singkat perlu diisi!" }),
+    fullname: z.string().min(1, { message: "Nama lengkap perlu diisi!" }),
+    email: z.string().min(1, { message: "Email perlu diisi!" }),
+    nis: z.string().min(1, { message: "NIS perlu diisi!" }),
+    password: z.string().min(1, { message: "Password perlu diisi!" }),
   }),
   file: z
     .array(
@@ -44,7 +44,7 @@ const updateData = z.object({
               mime === "image/jpeg" ||
               mime === "image/jpg",
             {
-              message: "Icon harus berupa gambar (PNG/JPEG)",
+              message: "Foto Profil harus berupa gambar (PNG/JPEG)",
             }
           ),
       })
