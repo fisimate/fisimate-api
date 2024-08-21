@@ -63,6 +63,9 @@ const getAllStudents = async (req, res, next) => {
         createdAt: true,
         updatedAt: true,
       },
+      orderBy: {
+        updatedAt: "desc",
+      },
     });
 
     return apiSuccess(res, "Berhasil mendapatkan data siswa!", students);
@@ -122,7 +125,7 @@ const updateStudent = async (req, res, next) => {
     });
 
     if (req.file) {
-      const pictureUrl = await uploadToBucket(req.file);
+      const pictureUrl = await uploadToBucket(req.file, "profile-pictures");
       updatedData.profilePicture = pictureUrl;
     }
 

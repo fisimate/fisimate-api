@@ -11,6 +11,9 @@ const getAlls = async () => {
       examBanks: true,
       simulations: true,
     },
+    orderBy: {
+      updatedAt: "desc",
+    },
   });
 
   return chapters;
