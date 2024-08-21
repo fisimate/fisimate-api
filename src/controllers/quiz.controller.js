@@ -208,7 +208,17 @@ const generate = async (req, res, next) => {
       },
     });
 
-    const prompt = `Buatkan saya soal fisika tentang ${simulation.title} bab ${simulation.chapter.name}, buat setiap respon anda berbeda dengan respon sebelumnya dan berikan response dengan format: {"text": "<<soal akan berada disini>>","quizOptions": [{"text": "<<pilihan jawaban 1>>","isCorrect": <<boolean>>},{"text": "<<pilihan jawaban 2>>","isCorrect": <<boolean>>},{"text": "<<pilihan jawaban 3>>","isCorrect": <<boolean>>},{"text": "<<pilihan jawaban 4>>","isCorrect": <<boolean>>}]}`;
+    const prevQuestion = await prisma.question.findMany({
+      where: {
+        simulationId: simulationId,
+      },
+    });
+
+    const additionalPrompt = `berikut ini adalah pertanyaan yang sudah ada pada database saya, ${JSON.stringify(
+      prevQuestion
+    )}. Tolong buatkan saya soal lebih variatif dan tidak sama`;
+
+    const prompt = `Buatkan saya soal fisika tentang ${simulation.title} bab ${simulation.chapter.name}, buat setiap respon anda berbeda dengan respon sebelumnya dan berikan response dengan format: {"text": "<<soal akan berada disini>>","quizOptions": [{"text": "<<pilihan jawaban 1>>","isCorrect": <<boolean>>},{"text": "<<pilihan jawaban 2>>","isCorrect": <<boolean>>},{"text": "<<pilihan jawaban 3>>","isCorrect": <<boolean>>},{"text": "<<pilihan jawaban 4>>","isCorrect": <<boolean>>}]}, ${additionalPrompt}`;
 
     const geminiResponse = await geminiModel.generateContent(prompt);
 
