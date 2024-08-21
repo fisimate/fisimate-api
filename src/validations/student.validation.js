@@ -7,23 +7,17 @@ const createData = z.object({
     nis: z.string().min(1, { message: "NIS perlu diisi!" }),
     password: z.string().min(1, { message: "Password perlu diisi!" }),
   }),
-  file: z
-    .array(
-      z.object({
-        mimetype: z
-          .string()
-          .refine(
-            (mime) =>
-              mime === "image/png" ||
-              mime === "image/jpeg" ||
-              mime === "image/jpg",
-            {
-              message: "Foto Profil harus berupa gambar (PNG/JPEG)",
-            }
-          ),
-      })
-    )
-    .length(1, "Foto Profil diperlukan"),
+  file: z.object({
+    mimetype: z
+      .string()
+      .refine(
+        (mime) =>
+          mime === "image/png" || mime === "image/jpeg" || mime === "image/jpg",
+        {
+          message: "Foto Profil harus berupa gambar (PNG/JPEG/JPG)",
+        }
+      ),
+  }),
 });
 
 const updateData = z.object({
@@ -33,23 +27,17 @@ const updateData = z.object({
     nis: z.string().min(1, { message: "NIS perlu diisi!" }),
     password: z.string().min(1, { message: "Password perlu diisi!" }),
   }),
-  file: z
-    .array(
-      z.object({
-        mimetype: z
-          .string()
-          .refine(
-            (mime) =>
-              mime === "image/png" ||
-              mime === "image/jpeg" ||
-              mime === "image/jpg",
-            {
-              message: "Foto Profil harus berupa gambar (PNG/JPEG)",
-            }
-          ),
-      })
-    )
-    .optional(),
+  file: z.object({
+    mimetype: z
+      .string()
+      .refine(
+        (mime) =>
+          mime === "image/png" || mime === "image/jpeg" || mime === "image/jpg",
+        {
+          message: "Foto Profil harus berupa gambar (PNG/JPEG/JPG)",
+        }
+      ),
+  }),
 });
 
 export default { createData, updateData };

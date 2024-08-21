@@ -37,11 +37,13 @@ const updatePicture = z.object({
   file: z.object({
     mimetype: z
       .string()
-      .refine((mimetype) => mimetype.startsWith("image/"), {
-        message: "Format file tidak valid",
-      })
-      .optional(),
-    buffer: z.instanceof(Buffer, { message: "File is required" }),
+      .refine(
+        (mime) =>
+          mime === "image/png" || mime === "image/jpeg" || mime === "image/jpg",
+        {
+          message: "Foto Profil harus berupa gambar (PNG/JPEG/JPG)",
+        }
+      ),
   }),
 });
 

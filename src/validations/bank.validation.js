@@ -53,7 +53,7 @@ const updateData = z.object({
                   mime === "image/jpeg" ||
                   mime === "image/jpg",
                 {
-                  message: "Icon harus berupa gambar (PNG/JPEG)",
+                  message: "Icon harus berupa gambar (PNG/JPEG/JPG)",
                 }
               ),
           })
