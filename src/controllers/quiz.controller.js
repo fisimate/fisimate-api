@@ -39,8 +39,6 @@ const getQuizBySimulation = async (req, res, next) => {
 
 // create new quiz
 const create = async (req, res, next) => {
-  req.body.deleteImage = req.body.deleteImage === "true";
-
   try {
     const { simulationId } = req.params;
     const { text } = req.body;
@@ -93,8 +91,6 @@ const create = async (req, res, next) => {
 
 // Update quiz
 const update = async (req, res, next) => {
-  req.body.deleteImage = req.body.deleteImage === "true";
-
   try {
     const { text, deleteImage } = req.body;
     const { simulationId, questionId } = req.params;
