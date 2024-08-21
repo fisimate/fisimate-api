@@ -18,7 +18,6 @@ const createData = z.object({
           message: "Harus ada satu jawaban yang bernilai benar!",
         }
       ),
-    deleteImage: z.boolean(),
   }),
   file: z
     .object({
@@ -49,7 +48,6 @@ const updateData = z.object({
           message: "Harus ada satu jawaban yang bernilai benar!",
         }
       ),
-    deleteImage: z.boolean(),
   }),
   file: z
     .object({
