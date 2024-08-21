@@ -18,7 +18,10 @@ const createData = z.object({
           message: "Harus ada satu jawaban yang bernilai benar!",
         }
       ),
-    deleteImage: z.boolean(),
+    deleteImage: z.union([
+      z.boolean(),
+      z.string().transform((val) => val === "true"),
+    ]),
   }),
   file: z
     .object({
@@ -49,7 +52,10 @@ const updateData = z.object({
           message: "Harus ada satu jawaban yang bernilai benar!",
         }
       ),
-    deleteImage: z.boolean(),
+    deleteImage: z.union([
+      z.boolean(),
+      z.string().transform((val) => val === "true"),
+    ]),
   }),
   file: z
     .object({
