@@ -20,17 +20,21 @@ const createData = z.object({
       ),
     deleteImage: z.boolean(),
   }),
-  file: z.object({
-    mimetype: z
-      .string()
-      .refine(
-        (mime) =>
-          mime === "image/png" || mime === "image/jpeg" || mime === "image/jpg",
-        {
-          message: "Gambar Soal harus berupa gambar (PNG/JPEG/JPG)",
-        }
-      ),
-  }),
+  file: z
+    .object({
+      mimetype: z
+        .string()
+        .refine(
+          (mime) =>
+            mime === "image/png" ||
+            mime === "image/jpeg" ||
+            mime === "image/jpg",
+          {
+            message: "Gambar Soal harus berupa gambar (PNG/JPEG/JPG)",
+          }
+        ),
+    })
+    .optional(),
 });
 
 const updateData = z.object({
@@ -47,17 +51,21 @@ const updateData = z.object({
       ),
     deleteImage: z.boolean(),
   }),
-  file: z.object({
-    mimetype: z
-      .string()
-      .refine(
-        (mime) =>
-          mime === "image/png" || mime === "image/jpeg" || mime === "image/jpg",
-        {
-          message: "Gambar Soal harus berupa gambar (PNG/JPEG/JPG)",
-        }
-      ),
-  }),
+  file: z
+    .object({
+      mimetype: z
+        .string()
+        .refine(
+          (mime) =>
+            mime === "image/png" ||
+            mime === "image/jpeg" ||
+            mime === "image/jpg",
+          {
+            message: "Gambar Soal harus berupa gambar (PNG/JPEG/JPG)",
+          }
+        ),
+    })
+    .optional(),
 });
 
 export default {
