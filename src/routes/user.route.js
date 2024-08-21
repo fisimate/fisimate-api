@@ -12,7 +12,6 @@ router.post(
   "/profile/picture",
   authenticateUser,
   upload.single("profilePicture"),
-  validate(userValidation.updatePicture),
   userController.updateProfilePicture
 );
 router.put(
