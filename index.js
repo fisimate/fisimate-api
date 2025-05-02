@@ -2,13 +2,13 @@ import express from "express";
 import dotenv from "dotenv";
 import morgan from "morgan";
 import http from "http";
-import errorHandlerMiddleware from "./middlewares/handleError.js";
+import errorHandlerMiddleware from "./src/middlewares/handleError.js";
 import cors from "cors";
 import helmet from "helmet";
-import routes from "./routes/index.js";
-import handleNotFoundRoute from "./middlewares/notFoundRoute.js";
+import routes from "./src/routes/index.js";
+import handleNotFoundRoute from "./src/middlewares/notFoundRoute.js";
 import compression from "compression";
-import xss from "./middlewares/xss.js";
+import xss from "./src/middlewares/xss.js";
 
 dotenv.config();
 
