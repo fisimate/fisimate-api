@@ -17,5 +17,7 @@ export default {
   certLocation: process.env.CERT_LOCATION,
   appUrl: process.env.APP_URL,
   bucketName: process.env.BUCKET_NAME,
-  geminiAPIKey: process.env.GEMINI_API_KEY
+  geminiAPIKey: process.env.GEMINI_API_KEY,
+  supabaseProjectUrl: process.env.SUPABASE_PROJECT_URL,
+  supabaseAPIKey: process.env.SUPABASE_API_KEY
 };

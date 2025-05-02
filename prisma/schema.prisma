@@ -78,7 +78,7 @@ model MaterialBank {
   chapterId String   @map("chapter_id")
   chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @map("updated_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([chapterId])
 }
@@ -190,7 +190,7 @@ model SimulationProgress {
   currentStep  Int      @default(0)
   totalSteps   Int      @default(3)
   createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
 
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   simulation Simulation @relation(fields: [simulationId], references: [id], onDelete: Cascade, onUpdate: Cascade)

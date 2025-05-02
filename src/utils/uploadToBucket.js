@@ -1,8 +1,9 @@
 import bucket from "../lib/bucket.js";
 import randomString from "../lib/crypto.js";
 import path from "path";
+import supabase from "../lib/supabase.js";
 
-export default function uploadToBucket(file, folderPath) {
+export function uploadToBucketGCP(file, folderPath) {
   const fileExt = path.extname(file.originalname);
   const customFileName = randomString(14) + fileExt;
   const filePath = folderPath
@@ -21,5 +22,25 @@ export default function uploadToBucket(file, folderPath) {
       resolve(publicUrl);
     });
     blobStream.end(file.buffer);
+  });
+}
+
+export default function uploadToBucket(file, folderPath) {
+  const fileExt = path.extname(file.originalname);
+  const customFileName = randomString(14) + fileExt;
+  const filePath = folderPath
+    ? `${folderPath}/${customFileName}`
+    : customFileName; // Include the folder path in the file name
+
+  return supabase.storage.from("fisimate-bucket").upload(filePath, file, {
+    upsert: true
+  }).then(({ data, error }) => {
+    if (error) {
+      throw error;
+    }
+    return data.fullPath;
+  }).catch(error => {
+    console.error("Error uploading file:", error);
+    throw error;
   });
 }
