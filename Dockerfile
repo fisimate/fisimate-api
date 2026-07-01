@@ -2,9 +2,9 @@ FROM node:latest
 
 WORKDIR /usr/src/app
 
-COPY package.json yarn.lock ./
+COPY package.json package-lock.json ./
 
-RUN yarn install
+RUN npm ci
 
 COPY . .
 
@@ -12,7 +12,7 @@ ENV PORT 8080
 
 ENV HOST 0.0.0.0
 
-RUN yarn prisma generate
+RUN npx prisma generate
 
 CMD [ "node", "./index.js" ]
 

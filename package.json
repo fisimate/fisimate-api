@@ -9,9 +9,9 @@
     "dev": "nodemon ./index.js",
     "db": "docker-compose up postgres",
     "db:seed": "node prisma/seeders/index.js",
-    "db:reset": "yarn db:down && yarn db:up && yarn db:seed",
-    "db:up": "yarn prisma migrate dev",
-    "db:down": "yarn prisma migrate reset --force",
+    "db:reset": "npm run db:down && npm run db:up && npm run db:seed",
+    "db:up": "prisma migrate dev",
+    "db:down": "prisma migrate reset --force",
     "docker": "docker-compose up",
     "docker-down": "docker-compose down"
   },
