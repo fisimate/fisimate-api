@@ -20,7 +20,13 @@ export const clean = (data = "") => {
 const middleware = () => {
   return (req, res, next) => {
     if (req.body) req.body = clean(req.body);
-    if (req.query) req.query = clean(req.query);
+    if (req.query) {
+      // Express 5 exposes req.query as a getter-only property, so it must
+      // be sanitized in place rather than reassigned.
+      const cleaned = clean(req.query);
+      for (const key of Object.keys(req.query)) delete req.query[key];
+      Object.assign(req.query, cleaned);
+    }
     if (req.params) req.params = clean(req.params);
     next();
   };
