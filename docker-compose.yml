@@ -5,3 +5,22 @@ services:
     build: .
     ports:
       - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: fisimate
+      POSTGRES_PASSWORD: fisimate
+      POSTGRES_DB: fisimate
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
