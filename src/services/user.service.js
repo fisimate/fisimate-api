@@ -1,10 +1,8 @@
 import BadRequestError from "../errors/badRequest.js";
 import { compare, encrypt } from "../lib/bcrypt.js";
-import bucket from "../lib/bucket.js";
-import randomString from "../lib/crypto.js";
 import prisma from "../lib/prisma.js";
 import exclude from "../utils/exclude.js";
-import path from "path";
+import uploadToBucket from "../utils/uploadToBucket.js";
 
 const updateProfile = async (req) => {
   const { email, fullname, nis } = req.body;
@@ -86,7 +84,7 @@ const updateProfilePicture = async (req) => {
   const { profilePicture } = req.body;
 
   if (!req.file && profilePicture == null) {
-    await prisma.user.update({
+    const updatedUser = await prisma.user.update({
       where: {
         id,
       },
@@ -95,37 +93,17 @@ const updateProfilePicture = async (req) => {
       },
     });
 
-    return;
+    return exclude(updatedUser, ["password"]);
   }
 
-  const extension = path.extname(req.file.originalname);
-  const randomName = randomString(14) + extension;
+  const publicUrl = await uploadToBucket(req.file, "profile-pictures");
 
-  const blob = bucket.file(`profile-pictures/${randomName}`);
-  const blobStream = blob.createWriteStream({ resumable: true });
-
-  return new Promise((resolve, reject) => {
-    blobStream.on("error", (err) => {
-      reject(new Error("Server error, tidak bisa upload image"));
-    });
-
-    blobStream.on("finish", async () => {
-      const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
-
-      try {
-        const updatedUser = await prisma.user.update({
-          where: { id },
-          data: { profilePicture: publicUrl },
-        });
-
-        resolve(exclude(updatedUser, ["password"]));
-      } catch (error) {
-        reject(new Error("System error, tidak bisa update user"));
-      }
-    });
-
-    blobStream.end(req.file.buffer);
+  const updatedUser = await prisma.user.update({
+    where: { id },
+    data: { profilePicture: publicUrl },
   });
+
+  return exclude(updatedUser, ["password"]);
 };
 
 export default {

@@ -1,29 +1,7 @@
-import bucket from "../lib/bucket.js";
 import randomString from "../lib/crypto.js";
 import path from "path";
 import supabase from "../lib/supabase.js";
-
-export function uploadToBucketGCP(file, folderPath) {
-  const fileExt = path.extname(file.originalname);
-  const customFileName = randomString(14) + fileExt;
-  const filePath = folderPath
-    ? `${folderPath}/${customFileName}`
-    : customFileName; // Include the folder path in the file name
-  const blob = bucket.file(filePath);
-  const blobStream = blob.createWriteStream({
-    resumable: false,
-    contentType: file.mimetype,
-  });
-
-  return new Promise((resolve, reject) => {
-    blobStream.on("error", (err) => reject(err));
-    blobStream.on("finish", () => {
-      const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
-      resolve(publicUrl);
-    });
-    blobStream.end(file.buffer);
-  });
-}
+import configs from "../configs/index.js";
 
 export default function uploadToBucket(file, folderPath) {
   const fileExt = path.extname(file.originalname);
@@ -32,15 +10,21 @@ export default function uploadToBucket(file, folderPath) {
     ? `${folderPath}/${customFileName}`
     : customFileName; // Include the folder path in the file name
 
-  return supabase.storage.from("fisimate-bucket").upload(filePath, file, {
-    upsert: true
-  }).then(({ data, error }) => {
-    if (error) {
+  const bucket = supabase.storage.from(configs.supabaseBucketName);
+
+  return bucket
+    .upload(filePath, file.buffer, {
+      contentType: file.mimetype,
+      upsert: true,
+    })
+    .then(({ data, error }) => {
+      if (error) {
+        throw error;
+      }
+      return bucket.getPublicUrl(data.path).data.publicUrl;
+    })
+    .catch((error) => {
+      console.error("Error uploading file:", error);
       throw error;
-    }
-    return data.fullPath;
-  }).catch(error => {
-    console.error("Error uploading file:", error);
-    throw error;
-  });
+    });
 }

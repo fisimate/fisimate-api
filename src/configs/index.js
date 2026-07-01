@@ -16,8 +16,8 @@ export default {
   googleClientRedirect: process.env.GOOGLE_CLIENT_REDIRECT,
   certLocation: process.env.CERT_LOCATION,
   appUrl: process.env.APP_URL,
-  bucketName: process.env.BUCKET_NAME,
   geminiAPIKey: process.env.GEMINI_API_KEY,
   supabaseProjectUrl: process.env.SUPABASE_PROJECT_URL,
-  supabaseAPIKey: process.env.SUPABASE_API_KEY
+  supabaseAPIKey: process.env.SUPABASE_API_KEY,
+  supabaseBucketName: process.env.SUPABASE_BUCKET_NAME || "fisimate-bucket"
 };
