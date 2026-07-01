@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node ./src/index.js",
-    "dev": "nodemon ./src/index.js",
+    "start": "node ./index.js",
+    "dev": "nodemon ./index.js",
     "db": "docker-compose up postgres",
     "db:seed": "node prisma/seeders/index.js",
     "db:reset": "yarn db:down && yarn db:up && yarn db:seed",
