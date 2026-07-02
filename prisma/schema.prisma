@@ -23,6 +23,8 @@ model User {
   role               Role                 @relation(fields: [roleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   quizAttempt        QuizAttempt[]
   simulationProgress SimulationProgress[]
+
+  @@map("users")
 }
 
 model RefreshToken {
@@ -34,12 +36,15 @@ model RefreshToken {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([userId])
+  @@map("refresh_tokens")
 }
 
 model Role {
   id    String @id @default(uuid())
   name  String
   users User[]
+
+  @@map("roles")
 }
 
 model Chapter {
@@ -54,6 +59,8 @@ model Chapter {
   materialBanks    MaterialBank[]
   formulaBanks     FormulaBank[]
   simulations      Simulation[]
+
+  @@map("chapters")
 }
 
 model ExamBank {
@@ -67,6 +74,7 @@ model ExamBank {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([chapterId])
+  @@map("exam_banks")
 }
 
 model MaterialBank {
@@ -80,6 +88,7 @@ model MaterialBank {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([chapterId])
+  @@map("material_banks")
 }
 
 model FormulaBank {
@@ -93,6 +102,7 @@ model FormulaBank {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([chapterId])
+  @@map("formula_banks")
 }
 
 model Simulation {
@@ -110,6 +120,7 @@ model Simulation {
   simulationProgress SimulationProgress[]
 
   @@index([chapterId])
+  @@map("simulations")
 }
 
 model Material {
@@ -121,6 +132,7 @@ model Material {
   updatedAt    DateTime   @updatedAt @map("updated_at")
 
   @@index([simulationId])
+  @@map("materials")
 }
 
 model Question {
@@ -135,6 +147,7 @@ model Question {
   userQuizResponse UserQuizResponse[]
 
   @@index([simulationId])
+  @@map("questions")
 }
 
 model QuizOption {
@@ -148,6 +161,7 @@ model QuizOption {
   userQuizResponse UserQuizResponse[]
 
   @@index([questionId])
+  @@map("quiz_options")
 }
 
 model QuizReview {
@@ -159,16 +173,19 @@ model QuizReview {
   updatedAt    DateTime   @updatedAt @map("updated_at")
 
   @@index([simulationId])
+  @@map("quiz_reviews")
 }
 
 model UserQuizResponse {
   id               String      @id @default(uuid())
   quizAttemptId    String      @map("quiz_attempt_id")
-  questionId       String
-  selectedOptionId String
+  questionId       String      @map("question_id")
+  selectedOptionId String      @map("selected_option_id")
   quizAttempt      QuizAttempt @relation(fields: [quizAttemptId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   question         Question    @relation(fields: [questionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   selectedOption   QuizOption  @relation(fields: [selectedOptionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("user_quiz_responses")
 }
 
 model QuizAttempt {
@@ -180,19 +197,22 @@ model QuizAttempt {
   simulation       Simulation         @relation(fields: [simulationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   user             User               @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userQuizResponse UserQuizResponse[]
+
+  @@map("quiz_attempts")
 }
 
 model SimulationProgress {
   id           String   @id @default(uuid())
-  userId       String
+  userId       String   @map("user_id")
   simulationId String   @map("simulation_id")
   currentStep  Int      @default(0)
   totalSteps   Int      @default(3)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now()) @updatedAt
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
 
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   simulation Simulation @relation(fields: [simulationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([userId, simulationId])
+  @@map("simulation_progresses")
 }

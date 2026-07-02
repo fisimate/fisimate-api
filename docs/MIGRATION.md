@@ -303,3 +303,116 @@ lokal.
   lagi yang dipakai `.env` aktif di mesin ini.
 - `.env` berisi credential database asli (password, connection string) —
   sudah dipastikan `.env` ada di `.gitignore` sehingga tidak akan ke-commit.
+
+## Enable RLS di semua tabel (2026-07-02)
+
+Setelah database dipindah ke Supabase Postgres, Table Editor di dashboard
+menampilkan badge **"UNRESTRICTED"** di semua 16 tabel. Ini bukan bug baru —
+ini exposure yang otomatis muncul begitu database-nya jadi Supabase.
+
+**Sebab**: badge itu artinya Row Level Security (RLS) mati di tabel
+tersebut. Supabase otomatis mengaktifkan **Data API** (PostgREST) untuk
+semua tabel di schema `public` secara default. Kalau RLS mati, siapa pun
+yang punya Publishable Key project (key yang secara desain memang boleh
+publik, mis. dipakai di frontend) bisa query langsung
+`GET /rest/v1/User?select=*` dan mendapat seluruh isi tabel — termasuk
+`password` hash — sepenuhnya melewati Express API + JWT auth aplikasi ini.
+
+**Kenapa bisa mati**: tabel-tabel ini dibuat lewat migrasi Prisma (SQL
+polos, `CREATE TABLE`), bukan lewat Supabase dashboard. Prisma tidak punya
+konsep RLS/Supabase sama sekali, jadi tidak pernah ada
+`ALTER TABLE ... ENABLE ROW LEVEL SECURITY` yang dijalankan. Default Postgres
+untuk RLS adalah mati, dan Prisma tidak mengubah itu.
+
+### Perbaikan
+
+Migrasi baru `prisma/migrations/20260702071048_enable_rls_deny_all/migration.sql`
+menjalankan `ALTER TABLE ... ENABLE ROW LEVEL SECURITY` di semua 16 tabel
+(termasuk `_prisma_migrations`), **tanpa policy apa pun** — artinya deny-all
+untuk role manapun kecuali pemilik tabel.
+
+Backend Fisimate sendiri **tidak terpengaruh**: koneksi Prisma
+(`DATABASE_URL`/`DIRECT_URL`, role `postgres.<project-ref>`) adalah pemilik
+tabel, dan di Postgres pemilik tabel otomatis bypass RLS kecuali
+`FORCE ROW LEVEL SECURITY` dipasang (sengaja tidak dipasang). Yang diblokir
+cuma akses lewat PostgREST/`supabase-js` pakai Publishable/anon key — jalur
+yang memang tidak dipakai aplikasi ini.
+
+### Verifikasi
+
+- Query langsung ke `pg_class.relrowsecurity` mengonfirmasi ke-16 tabel
+  sekarang `true`.
+- Smoke test penuh (login → JWT → fetch data terproteksi) diulang setelah
+  migrasi ini diterapkan — semua tetap normal, mengonfirmasi Prisma memang
+  bypass RLS seperti yang diharapkan.
+- **Belum dites**: akses PostgREST pakai Publishable Key sungguhan (butuh
+  key itu, belum tersedia di sesi ini). Untuk verifikasi manual:
+  `curl "https://{project}.supabase.co/rest/v1/User?select=*" -H "apikey: <PUBLISHABLE_KEY>" -H "Authorization: Bearer <PUBLISHABLE_KEY>"`
+  — seharusnya balas kosong/error, bukan daftar user.
+
+> **Update**: migrasi `20260702071048_enable_rls_deny_all` di atas sudah
+> di-squash (dihapus, digabung ke migrasi awal) saat penamaan tabel
+> dirapikan — lihat [Rapikan penamaan tabel & squash migrasi](#rapikan-penamaan-tabel--squash-migrasi-2026-07-02).
+> Isi section ini tetap relevan sebagai penjelasan *kenapa* RLS perlu
+> diaktifkan, cuma nama file migrasi & nama tabel (`User` → `users`) di
+> contoh command sudah tidak akurat lagi.
+
+## Rapikan penamaan tabel & squash migrasi (2026-07-02)
+
+### Masalah
+
+Kolom-kolom di schema sudah konsisten `snake_case` lewat `@map`/`@@map`
+(`profile_picture`, `created_at`, dst.), tapi **nama tabel tidak pernah
+di-map** — Prisma pakai nama model apa adanya: PascalCase singular (`User`,
+`QuizAttempt`) alih-alih `snake_case` jamak (`users`, `quiz_attempts`) yang
+jadi konvensi umum di ekosistem Postgres/Rails/Django. Akibatnya setiap query
+manual ke database harus quote identifier (`"User"`, bukan `user` polos)
+karena Postgres case-sensitive begitu identifier di-quote.
+
+Sekalian ditemukan 3 kolom di `SimulationProgress`
+(`userId`, `createdAt`, `updatedAt`) dan 2 kolom di `UserQuizResponse`
+(`questionId`, `selectedOptionId`) yang **luput** dari `@map` — beda sendiri
+dari kolom lain di model yang sama yang sudah konsisten snake_case. Ini
+inkonsistensi nyata, bukan sekadar gaya penamaan.
+
+### Kenapa squash, bukan migrasi rename terpisah
+
+Menambah migrasi `ALTER TABLE ... RENAME TO ...` di atas 7 migrasi yang ada
+(5 migrasi awal + 1 migrasi RLS + 1 migrasi rename) akan membuat riwayat
+migrasi makin berantakan untuk project yang baru mulai lagi. Karena database
+cuma berisi data seed/test (bukan data produksi), lebih bersih untuk:
+
+1. Update `prisma/schema.prisma` — tambah `@@map(...)` snake_case jamak di
+   semua 15 model, lengkapi `@map` yang tadinya hilang di 5 kolom di atas.
+2. Generate satu migrasi baru dari nol lewat
+   `npx prisma migrate diff --from-empty --to-schema prisma/schema.prisma --script`
+   (murni diff schema → SQL, tidak menyentuh database manapun).
+3. Gabungkan statement `ENABLE ROW LEVEL SECURITY` (lihat section RLS di
+   atas) ke migrasi yang sama, supaya cuma ada 1 migrasi awal yang
+   mendefinisikan seluruh skema final + RLS sekaligus.
+4. **Hapus semua 6 migrasi lama**, ganti dengan migrasi tunggal
+   `prisma/migrations/20260702071919_init/`.
+5. **Bersihkan database Supabase**: `DROP TABLE ... CASCADE` untuk 15 tabel
+   lama (nama PascalCase) + `_prisma_migrations`, dikonfirmasi eksplisit ke
+   user dulu sebelum dijalankan (aksi destruktif ke database live, di luar
+   jalur `prisma migrate reset` yang biasanya sudah punya guard bawaan
+   Prisma — lihat [Prisma 5.8 → 7.8](#prisma-58--78)).
+6. `prisma migrate deploy` menerapkan migrasi baru ke database yang sudah
+   kosong, `npm run db:seed` mengisi ulang data awal.
+
+Satu tabel (`_prisma_migrations`) sempat luput dari RLS di migrasi pertama
+karena tabel itu baru dibuat oleh Prisma sendiri tepat sebelum migrasi
+diterapkan — jadi ditambah migrasi kecil kedua,
+`20260702072422_enable_rls_prisma_migrations`, khusus untuk itu.
+
+### Verifikasi
+
+- Query `pg_class` mengonfirmasi seluruh 16 tabel sekarang `snake_case`
+  jamak dan `relrowsecurity = true`.
+- `grep` memastikan tidak ada raw SQL (`$queryRaw`/`$executeRaw`) di
+  manapun di codebase yang mereferensikan nama tabel lama — semua akses
+  lewat Prisma query builder, jadi rename ini tidak butuh perubahan kode
+  aplikasi sama sekali di luar `schema.prisma`.
+- Smoke test penuh diulang lagi setelah squash: login → JWT → fetch data
+  terproteksi → upload file, semua berhasil terhadap skema yang sudah
+  dirapikan.
