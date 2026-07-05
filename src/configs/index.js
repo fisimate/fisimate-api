@@ -17,6 +17,9 @@ export default {
   certLocation: process.env.CERT_LOCATION,
   appUrl: process.env.APP_URL,
   geminiAPIKey: process.env.GEMINI_API_KEY,
+  sumopodAPIKey: process.env.SUMOPOD_API_KEY,
+  sumopodBaseUrl: process.env.SUMOPOD_BASE_URL || "https://ai.sumopod.com/v1",
+  sumopodModel: process.env.SUMOPOD_MODEL || "gpt-4o-mini",
   supabaseProjectUrl: process.env.SUPABASE_PROJECT_URL,
   supabaseAPIKey: process.env.SUPABASE_API_KEY,
   supabaseBucketName: process.env.SUPABASE_BUCKET_NAME || "fisimate-bucket"

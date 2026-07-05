@@ -12,3 +12,4 @@ export { default as quizOptionService } from "./quizOption.service.js";
 export { default as quizReviewService } from "./quizReview.service.js";
 export { default as userQuizResponseService } from "./userQuizResponse.service.js";
 export { default as dashboardService } from "./dashboard.service.js";
+export { default as chatbotService } from "./chatbot.service.js";

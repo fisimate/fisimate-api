@@ -8,6 +8,7 @@ import simulationRoute from "./simulation.route.js";
 import chapterRoute from "./chapter.route.js";
 import dashboardRoute from "./dashboard.route.js";
 import quizRoute from "./quiz.route.js";
+import chatbotRoute from "./chatbot.route.js";
 
 const router = express.Router();
 
@@ -47,6 +48,10 @@ const defaultRoutes = [
   {
     path: "/quizzes",
     route: quizRoute,
+  },
+  {
+    path: "/chatbot",
+    route: chatbotRoute,
   },
 ];
 

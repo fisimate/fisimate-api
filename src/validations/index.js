@@ -8,3 +8,4 @@ export { default as quizAttemptValidation } from "./quizAttempt.validation.js";
 export { default as quizReviewValidation } from "./quizReview.validation.js";
 export { default as simulationValidation } from "./simulation.validation.js";
 export { default as studentValidation } from "./student.validation.js";
+export { default as chatbotValidation } from "./chatbot.validation.js";
