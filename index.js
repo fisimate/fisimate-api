@@ -9,6 +9,8 @@ import routes from "./src/routes/index.js";
 import handleNotFoundRoute from "./src/middlewares/notFoundRoute.js";
 import compression from "compression";
 import xss from "./src/middlewares/xss.js";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./src/configs/swagger.js";
 
 dotenv.config();
 
@@ -25,6 +27,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cors());
+
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, { customSiteTitle: "Fisimate API Docs" })
+);
+
 app.use(helmet());
 app.use(compression());
 app.use(xss());
